@@ -390,6 +390,28 @@ body.sticky-header header h1 {
   background-color: seagreen;
 }
 
+.dashboard {
+  background-color: snow;
+  border: dotted 5px lightblue;
+
+
+}
+
+.dashboard title {
+   font : white;
+   font-style: oblique;
+   font-weight: bolder;
+}
+
+.dashboard .TODOlist {
+    background-color: papayawhip;
+}
+
+.dashboard .list_title {
+  color:darkblue;
+  font-size:22;
+}
+
 .error {
   background-color: red;
 

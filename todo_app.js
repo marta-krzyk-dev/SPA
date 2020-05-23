@@ -1,6 +1,6 @@
 //#region Global variables
 var taskList;
-var sign_form, log_in_form, error_message, signed_up_message;
+var sign_form, log_in_form, error_message, signed_up_message, dashboard;
 //#endregion
 
 //#region Site loaded
@@ -13,6 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	log_in_form = log_panel.querySelector('#log_in_form');
 	error_message = log_panel.querySelector('#error_message');
 	signed_up_message = log_panel.querySelector('#signed_up_message');
+	dashboard = document.getElementById("dashboard");
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
@@ -86,13 +87,24 @@ function CheckIfStringsNotEmpty(names, ...elems) {
 	return true;
 }
 //#endregion
-function yeah(event){
-	console.log(event)
-}
-
 //#region Dashboard
-function DisplayDashboard() {
+function DisplayDashboard(data = null) {
+	CollapseAllForms();
+	ShowElement(dashboard);
+	//Load data from user
+	//create div for lists
 
+//	for(list of data) {
+	for(i=0; i<3; ++i) {
+		let listDiv = document.createElement('UL');
+		listDiv.classList.add('TODOlist');
+
+		let checkBox = document.createElement('CHECKBOX');
+		let textBox = document.createElement('RICHTEXTBOX');
+
+		listDiv.innerHTML = "<input class=\"list_title\">LIST TITLE</input><li><input type=\"checkbox\"\/><input type=\"text\"></input></li>";
+		dashboard.appendChild(listDiv);
+	}
 }
 //#endregion
 
@@ -162,7 +174,7 @@ function LogIn(event){
 	if (user) {
 		if (user.password === password) {
 			console.log('Logged in.');
-			DisplayDashboard();
+			DisplayDashboard(user.lists);
 		} else {
 			ShowLoggingError('Incorrect password!');
 		}
