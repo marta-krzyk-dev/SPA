@@ -1,6 +1,6 @@
 //#region Global variables
 var taskList;
-var sign_form, log_in_form, error_message;
+var sign_form, log_in_form, error_message, signed_up_message;
 //#endregion
 
 //#region Site loaded
@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	sign_form = log_panel.querySelector('#sign_up_form');
 	log_in_form = log_panel.querySelector('#log_in_form');
 	error_message = log_panel.querySelector('#error_message');
+	signed_up_message = log_panel.querySelector('#signed_up_message');
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
@@ -31,7 +32,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	// window.localStorage - stores data with no expiration date
 	var dict = [{"admin@gmail.com":{"password":"abc"}}];
 	console.log(JSON.stringify(dict));
-	window.localStorage.setItem('users', dict);
+	window.localStorage.setItem("admin@gmail.com", JSON.stringify({"password":"abc"}));
 	console.log(window.localStorage);
 	console.log(JSON.stringify(window.localStorage));
 	window.localStorage.setItem('users', dict)
@@ -66,51 +67,102 @@ function ShowLoggingError(message) {
 	ShowElement(error_message);
 	error_message.innerText = message;
 }
+
+function ShowSignUpMessage(message) {
+
+	ShowElement(signed_up_message);
+	signed_up_message.innerText = message;
+}
+
+function CheckIfStringsNotEmpty(names, ...elems) {
+
+	for(i=0; i < names.length; ++i) {
+		if (!elems[i]) {
+			ShowLoggingError(names[i] + ' is empty.');
+			return false;
+		}
+	}
+
+	return true;
+}
+//#endregion
+function yeah(event){
+	console.log(event)
+}
+
+//#region Dashboard
+function DisplayDashboard() {
+
+}
 //#endregion
 
 //#region Methods for listeners
 function Register(event){
 	event.preventDefault();
+	CollapseElements(error_message, signed_up_message);
 
-	const agreed_to_terms = sign_form[4].value === "check";
+	const agreed_to_terms = sign_form[4].checked;
+	console.log("Agreed to terms: "  + agreed_to_terms)
+
 	if (!agreed_to_terms) {
 		ShowLoggingError('You have to agree with Terms of Use.');
 		return;
 	}
 
 	const email = sign_form[2].value;
-	const users = JSON.parse(window.localStorage.getItem('users'))
-	const user = users[email];
-	if(!user) {
-		user = {
-			'name' : sign_form[0].value,
-			'surname' : sign_form[1].value,
-			'password' : sign_form[3].value, //HASH!
-		};
-		window.localStorage.setItem(email, JSON.stringify(user));
-		ShowSignUpMessage('Your account was created, please log in!');
+	if (!email) {
+		ShowLoggingError('Email is empty.');
+		return;
+	}
+	const user = JSON.parse(localStorage.getItem(email));
+	console.log("user read : " + user)
+
+	if(user) {
+		ShowLoggingError('The user with this email already exists');
 	}
 	else {
-		ShowLoggingError('The user with this email already exists');
+		const name = sign_form[0].value;
+		const surname = sign_form[1].value;
+		const password = sign_form[3].value;
+
+		if (!CheckIfStringsNotEmpty(['Name','Surname','Password'], name, surname, password))
+			return;
+
+		user_data = {
+			'name' : name,
+			'surname' : surname,
+			'password' : password, //HASH!
+			'lists' : null
+		};
+
+		try {
+			localStorage.setItem(email, JSON.stringify(user_data));
+			ShowSignUpMessage('Your account was created, please log in!');
+			console.log("Registered: " + email);
+			DisplayDashboard();
+		} catch (error) {
+			ShowLoggingError('Error while signing up.');
+		}
 	}
 }
 
 function LogIn(event){
-	
+	console.log("Log in ()...")
 	event.preventDefault();
 	CollapseElement(error_message);
 
 	email = log_in_form[0].value;
 	password = log_in_form[1].value;
+	console.log("I read props: " + email + " " + password)
 
-	const users = window.localStorage.getItem('users');
-	console.log(users);
-	const user = users[email];
-
+	const user = JSON.parse(localStorage.getItem(email));
+	console.log("User:" + user);
 	console.log('User read in log in  : ' + user);
+
 	if (user) {
 		if (user.password === password) {
-			console.log('logging in...');
+			console.log('Logged in.');
+			DisplayDashboard();
 		} else {
 			ShowLoggingError('Incorrect password!');
 		}
@@ -167,6 +219,12 @@ function CollapseById(id) {
 
 function CollapseElement(element) {
 	element.style.display = 'none';
+}
+
+function CollapseElements(...elements) {
+	for(element of elements) {
+		element.style.display = 'none';
+	}
 }
 
 function noneById(id) {
