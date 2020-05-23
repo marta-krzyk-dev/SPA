@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type="text/javascript" charset="utf-8" src="todo_app.js"></script>
+    <title>Let's do it!</title>
+  </head>
+
+  <body class="main">
+    <header class="show_on_start">
+      <h1>TODOs list manager</h1>
+      <span id="description" class="desc"
+        >Immerse yourself into the world of effective task-smashing with this
+        innovate task-tracking tool. <br />
+        Start your journey into new life of concious planning now!</span
+      >
+
+      <button id="sign_up" onclick="ShowSignUpForm()">Sign up</button>
+      <button id="log_in" onclick="ShowLogInForm()">Log in</button>
+    </header>
+
+    <div id="logging">
+      <form id="sign_up_form" method="POST">
+        <div class="formError"></div>
+        <div class="inputWrapper">
+          <div class="inputLabel">First Name</div>
+          <input type="text" name="firstName" placeholder="Your name" />
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Last Name</div>
+          <input type="text" name="lastName" placeholder="Last name" />
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Email</div>
+          <input type="email" name="email" placeholder="example@gmail.com" />
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Choose a Password</div>
+          <input
+            type="password"
+            name="password"
+            placeholder="Make it a good one!"
+          />
+        </div>
+        <div class="inputWrapper">
+          <input  type="checkbox" name="tosAgreement" />
+          <div class="inputLabel" style="display: inline;">I agree to the Terms of Use</div>
+        </div>
+        <div class="inputWrapper ctaWrapper">
+          <button type="submit" class="cta green">Get Started</button>
+        </div>
+      </form>
+
+      <form id="log_in_form" method="POST">
+        <div class="inputWrapper">
+          <div class="inputLabel">Email</div>
+          <input type="email" name="email"/>
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Password</div>
+          <input type="password" name="password"/>
+        </div>
+        <div class="inputWrapper ctaWrapper">
+          <button type="submit" class="cta green">Log In</button>
+        </div>
+      </form>
+
+      <span class="error" id="error_message"></span>
+    </div>
+    <div id="dashboard">
+     
+      <form id="new_task_form" method="POST">
+        <input id="input_new_task" />
+        <button type="submit">Add</button>
+      </form>
+
+  
+      <button onclick="CreateToDoList()">Create New to-do List</button>
+      <ul id="tasks">
+        <li>Hey</li>
+      </ul>
+    </div>
+
+    <!-- <div class="wrapper">
+      <div class="header">
+        <ul class="menu">
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li class="loggedOut">
+            <a href="/account/create">Signup</a>
+          </li>
+          <li class="loggedOut">
+            <a href="/session/create">Login</a>
+          </li>
+          <li class="loggedIn">
+            <a href="/account/edit">Account Settings</a>
+          </li>
+          <li class="loggedIn">YEAH
+            <a id="logoutButton" onclick="LogOut()">Logout</a>
+          </li>
+        </ul>
+
+        <div class="clear" style="margin-left: 50px; "><p style="align-content:initial; color:black; font-size:xx-large; font-style:italic; font-weight:bolder" >TO DO Manager</p></div> 
+      </div>-->
+  </body>
+</html>
