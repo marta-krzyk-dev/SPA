@@ -28,12 +28,14 @@ window.addEventListener('DOMContentLoaded', () => {
 	CollapseAllForms();
 
 	//Initialize global storage
-	var dict = {'admin@gmail.com':{password:'abc'}};
+	// window.localStorage - stores data with no expiration date
+	var dict = [{"admin@gmail.com":{"password":"abc"}}];
 	console.log(JSON.stringify(dict));
-	//localStorage.setItem('users', dict);
-	console.log(localStorage);
-	console.log(JSON.stringify(localStorage));
-	const users = localStorage.getItem('users');
+	window.localStorage.setItem('users', dict);
+	console.log(window.localStorage);
+	console.log(JSON.stringify(window.localStorage));
+	window.localStorage.setItem('users', dict)
+	const users = window.localStorage.getItem('users');
 	console.log(users);
 
 	const parsed = JSON.parse(users);
@@ -77,7 +79,7 @@ function Register(event){
 	}
 
 	const email = sign_form[2].value;
-	const users = JSON.parse(localStorage.getItem('users'))
+	const users = JSON.parse(window.localStorage.getItem('users'))
 	const user = users[email];
 	if(!user) {
 		user = {
@@ -85,7 +87,7 @@ function Register(event){
 			'surname' : sign_form[1].value,
 			'password' : sign_form[3].value, //HASH!
 		};
-		localStorage.setItem(email, JSON.stringify(user));
+		window.localStorage.setItem(email, JSON.stringify(user));
 		ShowSignUpMessage('Your account was created, please log in!');
 	}
 	else {
@@ -101,7 +103,7 @@ function LogIn(event){
 	email = log_in_form[0].value;
 	password = log_in_form[1].value;
 
-	const users = localStorage.getItem('users');
+	const users = window.localStorage.getItem('users');
 	console.log(users);
 	const user = users[email];
 
