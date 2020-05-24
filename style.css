@@ -62,8 +62,27 @@ form div {
  */
 
 /* Resets */
+.menu {
+  background-color: darkblue;
+}
 
+.loggedIn {
+  visibility: collapse;
+  display: inline-block;
+}
 
+.loggedOut {
+  visibility: visible;
+  display: inline;
+}
+
+body.loggedIn .header ul li.loggedIn {
+    display: inline-block;
+}
+
+body.loggedIn .header ul li.loggedOut {
+    display: none;
+}
 
     .header ul {
         list-style-type: none;
@@ -415,4 +434,12 @@ body.sticky-header header h1 {
 .error {
   background-color: red;
 
+}
+
+.visible {
+  display: inline-block;
+}
+
+.invisible {
+  display: none;
 }

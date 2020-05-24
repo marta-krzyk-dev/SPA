@@ -1,6 +1,7 @@
 //#region Global variables
 var taskList;
-var sign_form, log_in_form, error_message, signed_up_message, dashboard;
+var current_user_data = null;
+var sign_form, log_in_form, error_message, signed_up_message, dashboard, no_lists_message;
 //#endregion
 
 //#region Site loaded
@@ -27,39 +28,15 @@ window.addEventListener('DOMContentLoaded', () => {
 	document.getElementById('dashboard').style.display = 'none';
 	log_panel.style.display = 'none';
 
+	//Set Visibility
+	setClassVisible('loggedIn', false);
+	setClassVisible('loggedOut', true);
 	CollapseAllForms();
 
 	//Initialize global storage
 	// window.localStorage - stores data with no expiration date
-	var dict = [{"admin@gmail.com":{"password":"abc"}}];
-	console.log(JSON.stringify(dict));
-	window.localStorage.setItem("admin@gmail.com", JSON.stringify({"password":"abc"}));
-	console.log(window.localStorage);
-	console.log(JSON.stringify(window.localStorage));
-	window.localStorage.setItem('users', dict)
-	const users = window.localStorage.getItem('users');
-	console.log(users);
-
-	const parsed = JSON.parse(users);
-	console.log(parsed);
+	localStorage.setItem("admin@gmail.com", JSON.stringify({"password":"abc"}));
 });
-//#endregion
-
-//#region Show hide methods
-function ShowSignUpForm() {
-	
-	CollapseAllForms();
-	document.getElementById('logging').style.display = 'block';
-	sign_form.style.display = 'block';
-}
-
-function ShowLogInForm() {
-	
-	CollapseAllForms();
-	//log_in_form.style.display = 'block';
-	ShowElement(log_in_form);
-	//ShowById('log_in_form');
-}
 //#endregion
 
 //#region Form-related methods
@@ -86,26 +63,23 @@ function CheckIfStringsNotEmpty(names, ...elems) {
 
 	return true;
 }
-//#endregion
-//#region Dashboard
-function DisplayDashboard(data = null) {
+
+//#region Show hide methods
+function ShowSignUpForm() {
+	
 	CollapseAllForms();
-	ShowElement(dashboard);
-	//Load data from user
-	//create div for lists
-
-//	for(list of data) {
-	for(i=0; i<3; ++i) {
-		let listDiv = document.createElement('UL');
-		listDiv.classList.add('TODOlist');
-
-		let checkBox = document.createElement('CHECKBOX');
-		let textBox = document.createElement('RICHTEXTBOX');
-
-		listDiv.innerHTML = "<input class=\"list_title\">LIST TITLE</input><li><input type=\"checkbox\"\/><input type=\"text\"></input></li>";
-		dashboard.appendChild(listDiv);
-	}
+	document.getElementById('logging').style.display = 'block';
+	sign_form.style.display = 'block';
 }
+
+function ShowLogInForm() {
+	
+	CollapseAllForms();
+	//log_in_form.style.display = 'block';
+	ShowElement(log_in_form);
+	//ShowById('log_in_form');
+}
+//#endregion
 //#endregion
 
 //#region Methods for listeners
@@ -151,6 +125,7 @@ function Register(event){
 			localStorage.setItem(email, JSON.stringify(user_data));
 			ShowSignUpMessage('Your account was created, please log in!');
 			console.log("Registered: " + email);
+			current_user_data = user;
 			DisplayDashboard();
 		} catch (error) {
 			ShowLoggingError('Error while signing up.');
@@ -174,6 +149,10 @@ function LogIn(event){
 	if (user) {
 		if (user.password === password) {
 			console.log('Logged in.');
+			setClassVisible('loggedIn', true);
+			setClassVisible('loggedOut', false);
+			current_user_data = user;
+
 			DisplayDashboard(user.lists);
 		} else {
 			ShowLoggingError('Incorrect password!');
@@ -181,6 +160,43 @@ function LogIn(event){
 	}
 	else {
 		ShowLoggingError('User does not exist.');
+	}
+}
+
+function LogOut() {
+	current_user_data = null;
+	setClassVisible('loggedIn', false);
+	setClassVisible('loggedOut', true);
+}
+//#endregion
+
+//#region Dashboard
+function DisplayDashboard(data = null) {
+	CollapseAllForms();
+	ShowElement(dashboard);
+	//Load data from user
+	//create div for lists
+
+	if (!data || data.length === 0) {
+		ShowElement(no_lists_message);
+		return;
+	} else {
+		CollapseElement(no_lists_message);
+	}
+
+	for(list of data) {
+		let listDiv = document.createElement('UL');
+		listDiv.classList.add('TODOlist');
+
+		innerHTML = "";
+		for(item of list) {
+			innerHTML += `<li>${item.text}</li>`;
+		}
+		let checkBox = document.createElement('CHECKBOX');
+		let textBox = document.createElement('RICHTEXTBOX');
+
+		listDiv.innerHTML = "<input class=\"list_title\" text=\"title\">LIST TITLE</input><li><input type=\"checkbox\"\/><input type=\"text\"></input></li>";
+		dashboard.appendChild(listDiv);
 	}
 }
 
@@ -245,4 +261,18 @@ function noneById(id) {
 
 function IsNotEmptyString(str)
 {}
+
+function setClassVisible(className, visible) {
+    const targets = document.querySelectorAll("."+className);
+    for (target of targets) {
+		if (visible) {
+			target.style.visibility = 'visible';
+			target.style.display = 'inline-block';
+		} else {
+			console.log("Making " + target + " invisible")
+			target.style.visibility = 'collapse';
+			target.style.display = 'none';
+		}
+    }
+};
 //#endregion

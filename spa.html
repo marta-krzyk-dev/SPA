@@ -10,19 +10,25 @@
   </head>
 
   <body class="main">
-    <header class="show_on_start">
+
+    <ul class="menu">
+      <li class="loggedOut"><button onclick="ShowLogInForm()">Log In</button></li>
+      <li class="loggedIn"><button onlick="LogOut()">Log Out</button></li>
+      <li class="loggedIn"><button>Account settings</button></li>
+    </ul>
+
+    <header class="show_on_start loggedOut">
       <h1>TODOs list manager</h1>
-      <span id="description" class="desc"
-        >Immerse yourself into the world of effective task-smashing with this
+      <span id="description" class="desc">
+        Immerse yourself into the world of effective task-smashing with this
         innovate task-tracking tool. <br />
-        Start your journey into new life of concious planning now!</span
-      >
+        Start your journey into new life of concious planning now!</span>
 
       <button id="sign_up" onclick="ShowSignUpForm()">Sign up</button>
       <button id="log_in" onclick="ShowLogInForm()">Log in</button>
     </header>
 
-    <div id="logging">
+    <div id="logging" class="loggedOut">
       <div class="message error" id="error_message"></div>
       <div class="message success" id="signed_up_message"></div>
 
@@ -73,9 +79,10 @@
 
    
     </div>
-    <div class="dashboard" id="dashboard">
+    <div class="dashboard loggedIn" id="dashboard">
      
       <title>TO DO lists</title>
+      <span id="no_lists_message">You have no TODO lists.</span>
       <form id="new_task_form" method="POST">
         <input id="input_new_task" />
         <button type="submit">Add</button>
