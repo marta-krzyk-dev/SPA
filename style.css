@@ -5,10 +5,12 @@ body {
   text-align: center;
   font-weight: bold;
   text-align: center;
-  padding: 40px;
+  padding: 0px;
+  margin: 0px;
 }
-
-p, h1, h2, h3, h4, h5, h6, div, span, header, footer, img, a, a:hover, a:active, a:visited, table, tr, td, th, form, input, select, textarea {
+s
+/*
+p, h1, h2, h3, h4, h5, h6, div, span, header, footer, img,table, tr, td, th, form, input, select, textarea {
     line-height: 100%;
     padding: 0;
     margin: 0;
@@ -18,12 +20,11 @@ p, h1, h2, h3, h4, h5, h6, div, span, header, footer, img, a, a:hover, a:active,
     text-decoration: none;
     color: #1a1a1a;
     border-width: 0;
-}
+}*/
 
 * {
     font-family: 'Sitka Text', sans-serif;
     text-align: center;
-    margin: 20px;
 }
 
 h1 {
@@ -53,18 +54,72 @@ form div {
     text-align: left;
     padding: 0 0 20px 0;
     margin: 0px 10px 0px 10px;
-	  display: block;
+    display: block;
+
 }
 
+.container {   
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+.innerContainer {
+    margin: 0;
+    position: absolute;
+    top: 500px;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%) 
+}
 /*
  * CSS Styles for Application
  *
  */
 
-/* Resets */
-.menu {
-  background-color: darkblue;
+/* MENU */
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  top: 0;
+  width: 100%;
 }
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #111;
+  cursor: pointer;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+
+.menu {
+  background-color: midnightblue; 
+  display: block;
+  width: 100%;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  object-position: left;
+}
+
+/* Logged in and Logged out styles*/
 
 .loggedIn {
   visibility: collapse;
@@ -74,44 +129,6 @@ form div {
 .loggedOut {
   visibility: visible;
   display: inline;
-}
-
-body.loggedIn .header ul li.loggedIn {
-    display: inline-block;
-}
-
-body.loggedIn .header ul li.loggedOut {
-    display: none;
-}
-
-    .header ul {
-        list-style-type: none;
-        text-align: right;
-        padding: 0 75px;
-        float: right;
-    }
-
-        .header ul li {
-            display: inline-block;
-            padding: 10px 10px 0 10px;
-        }
-
-            .header ul li a {
-                text-transform: uppercase;
-                font-weight: 900 !important;
-                font-size: 11px;
-            }
-
-            .header ul li.loggedIn {
-                display: none;
-            }
-
-body.loggedIn .header ul li.loggedIn {
-    display: inline-block;
-}
-
-body.loggedIn .header ul li.loggedOut {
-    display: none;
 }
 
 .content {
@@ -257,6 +274,16 @@ button {
     cursor: pointer;
 }
 
+div, span, form {
+  width: auto;
+  margin: 10px 40px 10px 40px;
+}
+
+form {
+  align-items: center;
+  width: 200px;
+}
+
 #description {
     text-align: center;
     display: table-cell;
@@ -269,21 +296,17 @@ button {
     display: block;
 }
 
-
 html {
   line-height: 1;
 }
 
-ol, ul {
-  list-style: none;
-}
-
+/*
 * {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
-/*
+
 body {
   background-color: #ecf0f1;
   font-family: helvetica, arial, sans-serif;
@@ -377,7 +400,7 @@ section {
 }
 
 /* Sticky Header Style */
-/* ---------------------------------------- */
+/* ---------------------------------------- 
 body.sticky-header {
   padding-top: 100px;
 }
@@ -391,7 +414,7 @@ body.sticky-header header h1 {
   -webkit-transform: scale(0, 0);
   transform: scale(0, 0);
 }
-
+*/
 .message {
   color:white;
   font-weight: bolder;
@@ -409,10 +432,11 @@ body.sticky-header header h1 {
   background-color: seagreen;
 }
 
+/* Dahsboard style */
 .dashboard {
   background-color: snow;
   border: dotted 5px lightblue;
-
+  margin: 10px;
 
 }
 
@@ -433,13 +457,5 @@ body.sticky-header header h1 {
 
 .error {
   background-color: red;
-
 }
 
-.visible {
-  display: inline-block;
-}
-
-.invisible {
-  display: none;
-}
