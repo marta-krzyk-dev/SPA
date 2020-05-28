@@ -1,7 +1,7 @@
 //#region Global variables
 var taskList;
 var current_user_data = null;
-var sign_form, log_in_form, error_message, signed_up_message, dashboard, no_lists_message;
+var sign_form, log_in_form, error_message, signed_up_message, dashboard, account_settings, no_lists_message;
 //#endregion
 
 //#region Site loaded
@@ -15,12 +15,16 @@ window.addEventListener('DOMContentLoaded', () => {
 	error_message = log_panel.querySelector('#error_message');
 	signed_up_message = log_panel.querySelector('#signed_up_message');
 	dashboard = document.getElementById("dashboard");
+	no_lists_message = document.getElementById("no_lists_message");
+	account_settings = document.getElementById('account_settings_form');
+
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
 	log_in_form.addEventListener("submit", LogIn);
 	const new_task_form = document.getElementById("new_task_form");
 	new_task_form.addEventListener("submit", addToList);
+	account_settings.addEventListener("submit", ChangeAccountSettings);
 
 	//show header
 	document.body.querySelector('HEADER').style.display = 'block';
@@ -35,7 +39,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	//Initialize global storage
 	// window.localStorage - stores data with no expiration date
-	localStorage.setItem("admin@gmail.com", JSON.stringify({"password":"abc"}));
+	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":"abc", "name": "John", "surname":"Cat", "lists": null}));
 });
 //#endregion
 
@@ -80,7 +84,6 @@ function ShowLogInForm() {
 	//ShowById('log_in_form');
 }
 //#endregion
-//#endregion
 
 //#region Methods for listeners
 function Register(event){
@@ -115,6 +118,7 @@ function Register(event){
 			return;
 
 		user_data = {
+			'email' : email,
 			'name' : name,
 			'surname' : surname,
 			'password' : password, //HASH!
@@ -220,9 +224,38 @@ function addToList(event){
 
 function CreateToDoList() {
 	console.log("CreateToDoList");
+	//Create list title input
+	//create 1 checkbox + text input
+	
+	addToList();
 };
 //#endregion
 
+//#region Account settings
+function ShowAccountSettings(){
+
+	ShowElement(account_settings);
+	
+	if (current_user_data) {
+		console.log('account_settings.elements ' + account_settings);
+		console.log('current use data: ' + JSON.stringify(current_user_data))
+		account_settings['name'].value = current_user_data['name'];
+		account_settings['surname'].value = current_user_data['surname'];
+		account_settings['email'].value = current_user_data['email'];
+		account_settings['password'].value = current_user_data['password']; // TODO: unhash
+	} else {
+		account_settings.querySelector('.formError').innerText = "Cannot load user's account settings. Try again later.";
+	}
+}
+
+function ChangeAccountSettings(event){
+	console.log("ChangeAccountSettings  " + event);
+	//get data from form/event
+	//validate
+	//save changes
+	//update local storage
+}
+//#endregion 
 //#region Helper methods
 function CollapseAllForms() {
 	const forms = document.querySelectorAll('FORM');
@@ -267,7 +300,7 @@ function setClassVisible(className, visible) {
     for (target of targets) {
 		if (visible) {
 			target.style.visibility = 'visible';
-			target.style.display = 'inline-block';
+			target.style.display = 'inline';
 		} else {
 			console.log("Making " + target + " invisible")
 			target.style.visibility = 'collapse';
