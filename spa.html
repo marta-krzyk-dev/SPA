@@ -9,12 +9,13 @@
     <title>Let's do it!</title>
   </head>
 
-  <body class="main">
 
+
+  <body>
     <ul class="menu">
-      <li class="loggedOut"><button onclick="ShowLogInForm()">Log In</button></li>
-      <li class="loggedIn"><button onlick="LogOut()">Log Out</button></li>
-      <li class="loggedIn"><button>Account settings</button></li>
+      <li class="loggedOut"><a onclick="ShowLogInForm()">Log In</a></li>
+      <li class="loggedIn"><a style="color:aliceblue" onclick="LogOut()">Logout</a></li>
+      <li class="loggedIn"><a onclick="ShowAccountSettings()">Account settings</a></li>
     </ul>
 
     <header class="show_on_start loggedOut">
@@ -28,11 +29,11 @@
       <button id="log_in" onclick="ShowLogInForm()">Log in</button>
     </header>
 
-    <div id="logging" class="loggedOut">
+    <div id="logging" class="innerContainer loggedOut">
       <div class="message error" id="error_message"></div>
       <div class="message success" id="signed_up_message"></div>
 
-      <form id="sign_up_form" method="POST">
+      <form  id="sign_up_form" method="POST">
         <div class="formError"></div>
         <div class="inputWrapper">
           <div class="inputLabel">First Name</div>
@@ -92,27 +93,36 @@
       <button onclick="SaveLists()">SAVE</button>
     </div>
 
-    <!-- <div class="wrapper">
-      <div class="header">
-        <ul class="menu">
-          <li>
-            <a href="/">Home</a>
-          </li>
-          <li class="loggedOut">
-            <a href="/account/create">Signup</a>
-          </li>
-          <li class="loggedOut">
-            <a href="/session/create">Login</a>
-          </li>
-          <li class="loggedIn">
-            <a href="/account/edit">Account Settings</a>
-          </li>
-          <li class="loggedIn">YEAH
-            <a id="logoutButton" onclick="LogOut()">Logout</a>
-          </li>
-        </ul>
-
-        <div class="clear" style="margin-left: 50px; "><p style="align-content:initial; color:black; font-size:xx-large; font-style:italic; font-weight:bolder" >TO DO Manager</p></div> 
-      </div>-->
+   <div>
+      <form id="account_settings_form" method="POST">
+        <div class="formError"></div>
+        <div class="inputWrapper">
+          <div class="inputLabel">First Name</div>
+          <input type="text" id="name" name="firstName" placeholder="Your name" />
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Last Name</div>
+          <input type="text" id="surname" name="lastName" placeholder="Last name" />
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Email</div>
+          <input type="email" id='email' name="email" placeholder="example@gmail.com" />
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">Choose a Password</div>
+          <input
+            type="password"
+            name="password"
+            placeholder="Make it a good one!"
+          />
+        </div>
+        <div class="inputWrapper">
+          
+        <div class="inputWrapper ctaWrapper">
+          <button type="submit" class="cta green">Save Changes</button>
+        </div>
+      </form>
+    </div>
+    
   </body>
 </html>
