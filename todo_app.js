@@ -1,8 +1,3 @@
-//#region Imports
-//var fs =import('fs');
-//var CryptoJS = import("crypto-js");
-//#endregion
-
 //#region Global variables
 var taskList;
 var current_user_data = null;
@@ -45,6 +40,8 @@ window.addEventListener('DOMContentLoaded', () => {
 	// window.localStorage - stores data with no expiration date
 	
 	var hashed_password = CryptoJS.SHA256("abc").toString();
+
+	
 	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": null}));
 });
 //#endregion
@@ -160,9 +157,7 @@ function LogIn(event){
 
 	let hash = CryptoJS.SHA256(password);
 	console.log('CryptoJS.SHA256(password):\n' + hash);
-	console.log( user.password.toString() + "   type of hash:" + hash.toString());
-
-
+	
 	if (user) {
 		if (user.password == hash.toString()) {
 			console.log('Logged in.');
