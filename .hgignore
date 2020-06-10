@@ -1,0 +1,4 @@
+syntax: glob
+
+node_modules/*
+CryptoJS v3.1.2/*
