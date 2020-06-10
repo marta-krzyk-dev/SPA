@@ -1,0 +1,4 @@
+syntax: glob
+
+node_modules/crypto-js/(?!.*\.sha256.js$).+
+node_modules/crypto-js/(?!.*\.core.js$).+

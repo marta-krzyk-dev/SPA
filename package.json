@@ -1,0 +1,22 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "description": "Pirple JS course project",
+  "main": "todo_app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marta-krzyk-dev/SPA.git"
+  },
+  "author": "Marta Krzyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marta-krzyk-dev/SPA/issues"
+  },
+  "homepage": "https://github.com/marta-krzyk-dev/SPA#readme",
+  "dependencies": {
+    "crypto-js": "^4.0.0"
+  }
+}
