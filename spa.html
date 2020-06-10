@@ -26,13 +26,15 @@
         innovate task-tracking tool. <br />
         Start your journey into new life of concious planning now!</span>
 
-      <button id="sign_up" onclick="ShowSignUpForm()">Sign up</button>
-      <button id="log_in" onclick="ShowLogInForm()">Log in</button>
+        <div class="clearfix">
+          <button id="log_in" class="halfScreenButton" onclick="ShowLogInForm()">Log in</button>
+          <button id="sign_up" class="halfScreenButton" onclick="ShowSignUpForm()">Sign up</button>
+        </div>
     </header>
 
     <div id="logging" class="innerContainer loggedOut">
       <div class="message error" id="error_message"></div>
-      <div class="message success" id="signed_up_message"></div>
+      
 
       <form  id="sign_up_form" method="POST">
         <div class="formError"></div>
