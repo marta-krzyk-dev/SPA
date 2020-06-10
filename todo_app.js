@@ -40,8 +40,6 @@ window.addEventListener('DOMContentLoaded', () => {
 	// window.localStorage - stores data with no expiration date
 	
 	var hashed_password = CryptoJS.SHA256("abc").toString();
-
-	
 	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": null}));
 });
 //#endregion
