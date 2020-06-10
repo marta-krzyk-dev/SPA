@@ -1,3 +1,8 @@
+//#region Imports
+//var fs =import('fs');
+//var CryptoJS = import("crypto-js");
+//#endregion
+
 //#region Global variables
 var taskList;
 var current_user_data = null;
@@ -17,7 +22,6 @@ window.addEventListener('DOMContentLoaded', () => {
 	dashboard = document.getElementById("dashboard");
 	no_lists_message = document.getElementById("no_lists_message");
 	account_settings = document.getElementById('account_settings_form');
-
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
@@ -39,7 +43,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	//Initialize global storage
 	// window.localStorage - stores data with no expiration date
-	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":"abc", "name": "John", "surname":"Cat", "lists": null}));
+	
+	var hashed_password = CryptoJS.SHA256("abc").toString();
+	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": null}));
 });
 //#endregion
 
@@ -121,9 +127,11 @@ function Register(event){
 			'email' : email,
 			'name' : name,
 			'surname' : surname,
-			'password' : password, //HASH!
+			'password' : CryptoJS.SHA256(password).toString(),
 			'lists' : null
 		};
+
+		console.log('Hashed password to ' + CryptoJS.SHA256(password));
 
 		try {
 			localStorage.setItem(email, JSON.stringify(user_data));
@@ -150,8 +158,13 @@ function LogIn(event){
 	console.log("User:" + user);
 	console.log('User read in log in  : ' + user);
 
+	let hash = CryptoJS.SHA256(password);
+	console.log('CryptoJS.SHA256(password):\n' + hash);
+	console.log( user.password.toString() + "   type of hash:" + hash.toString());
+
+
 	if (user) {
-		if (user.password === password) {
+		if (user.password == hash.toString()) {
 			console.log('Logged in.');
 			setClassVisible('loggedIn', true);
 			setClassVisible('loggedOut', false);
@@ -242,20 +255,61 @@ function ShowAccountSettings(){
 		account_settings['name'].value = current_user_data['name'];
 		account_settings['surname'].value = current_user_data['surname'];
 		account_settings['email'].value = current_user_data['email'];
-		account_settings['password'].value = current_user_data['password']; // TODO: unhash
 	} else {
 		account_settings.querySelector('.formError').innerText = "Cannot load user's account settings. Try again later.";
 	}
 }
 
 function ChangeAccountSettings(event){
-	console.log("ChangeAccountSettings  " + event);
+	event.preventDefault();
+	console.log("ChangeAccountSettings  " + JSON.stringify(event));
+	console.log(event);
+	form = event.srcElement;
+
 	//get data from form/event
-	//validate
-	//save changes
-	//update local storage
+	//validate name, surname
+	//if new_password is not null
+	const new_name = form['name'];
+	const new_surname = form['surname'];
+	const new_email = form['email'];
+
+	if (IsEmptyString(new_name)) {
+		ShowLoggingError('First name cannot be empty.');
+		return;
+	} else if (IsNotEmptyString(surname)) {
+		ShowLoggingError('Surname cannot be empty.');
+		return;
+	} else if (IsNotEmptyString(email)) {
+		ShowLoggingError('Email cannot be empty.');
+		return;
+	}
+
+	SavePassword(form['password'], form['new_password']);
+	
+
+	localStorage.setItem(current_user_data['email'], current_user_data);
+	//hhow to handle email change?
 }
-//#endregion 
+
+function SavePassword(current_password_hash, new_password) {
+
+	if (IsNotEmptyString(new_password)) {
+		const password = current_password_hash;
+		if (IsNotEmptyString(password)) {
+
+			let new_hashed_password = CryptoJS.SHA256(password);
+			if (new_hashed_password !== current_user_data['password']) {
+				ShowLoggingError('Current password is incorrect.');
+			} else {
+				current_user_data['password'] = CryptoJS.SHA256(new_password);
+			}
+		} else {
+			ShowLoggingError('Enter the current password to change it.');
+		}
+	}
+}
+//#endregion
+
 //#region Helper methods
 function CollapseAllForms() {
 	const forms = document.querySelectorAll('FORM');
@@ -292,8 +346,13 @@ function noneById(id) {
 	document.getElementById(id).style.display = 'none';
 }
 
-function IsNotEmptyString(str)
-{}
+function IsNotEmptyString(str) {
+	return str && str.trim().length > 0;
+}
+
+function IsEmptyString(str) {
+	return !str || str.trim().length === 0;
+}
 
 function setClassVisible(className, visible) {
     const targets = document.querySelectorAll("."+className);

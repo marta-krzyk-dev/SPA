@@ -263,6 +263,7 @@ input[type=checkbox] {
 
 button {
     text-transform: uppercase;
+    text-align: center;
     font-weight: bold !important;
     display: inline-flex !important;
     width: auto;

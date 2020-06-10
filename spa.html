@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content="" />
     <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type="text/javascript" charset="utf-8" src="node_modules/crypto-js/crypto-js.js"></script>
     <script type="text/javascript" charset="utf-8" src="todo_app.js"></script>
+
     <title>Let's do it!</title>
   </head>
-
-
 
   <body>
     <ul class="menu">
@@ -109,12 +109,12 @@
           <input type="email" id='email' name="email" placeholder="example@gmail.com" />
         </div>
         <div class="inputWrapper">
-          <div class="inputLabel">Choose a Password</div>
-          <input
-            type="password"
-            name="password"
-            placeholder="Make it a good one!"
-          />
+          <div class="inputLabel">Current Password</div>
+          <input type="password" name="password" placeholder="Your current password"/>
+        </div>
+        <div class="inputWrapper">
+          <div class="inputLabel">New Password</div>
+          <input type="password" name="new_password" placeholder="Make it a good one!"/>
         </div>
         <div class="inputWrapper">
           
@@ -123,6 +123,6 @@
         </div>
       </form>
     </div>
-    
+
   </body>
 </html>
