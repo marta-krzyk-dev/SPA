@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	//Initialize global storage
 	// window.localStorage - stores data with no expiration date
 	
-	var hashed_password = CryptoJS.SHA256("abc").toString();
+	var hashed_password = HashText("abc");
 	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": null}));
 });
 //#endregion
@@ -116,11 +116,11 @@ function Register(event){
 			'email' : email,
 			'name' : name,
 			'surname' : surname,
-			'password' : CryptoJS.SHA256(password).toString(),
+			'password' : HashText(password),
 			'lists' : []
 		};
 
-		console.log('Hashed password to ' + CryptoJS.SHA256(password));
+		console.log('Hashed password to ' + HashText(password));
 
 		try {
 			localStorage.setItem(email, JSON.stringify(user_data));
@@ -149,7 +149,7 @@ function LogIn(event){
 	console.log("User:" + user);
 	console.log('User read in log in  : ' + user);
 
-	let hash = CryptoJS.SHA256(password);
+	let hash = HashText(password);
 	console.log('CryptoJS.SHA256(password):\n' + hash);
 	
 	if (user) {
@@ -262,8 +262,8 @@ function ChangeAccountSettings(event){
 	console.log(event);
 	form = event.srcElement;
 
-	const new_name = form['name'];
-	const new_surname = form['surname'];
+	const new_name = form['name'].value;
+	const new_surname = form['surname'].value;
 	const new_user_data = current_user_data;
 	const old_email = current_user_data.email;
 
@@ -281,16 +281,16 @@ function ChangeAccountSettings(event){
 		new_user_data.surname = new_surname;
 	}
 
-	new_password = ChangePassword(form['password'], form['new_password']);
+	const new_password = ChangePassword(form['password'].value, form['new_password'].value);
 	if (!new_password){
-		new_user_data.password = CryptoJS.SHA256();
+		new_user_data.password = HashText(new_password); 
 	}
 	
 	console.log("email value: " + form['email'].value + " typ: " + typeof(form['email'].value));
 
 	new_user_data.email = ChangeEmail(current_user_data.email, form['email'].value);
 	localStorage.setItem(new_user_data.email, JSON.stringify(new_user_data));
-	localStorage[new_user_data.email].name = "CATTTTTTTTTTTTTTTTTTT";// JSON.stringify(new_user_data));
+	//localStorage[new_user_data.email].name = "CATTTTTTTTTTTTTTTTTTT";// JSON.stringify(new_user_data));
 	if (new_user_data.email !== old_email) {
 		localStorage.removeItem(old_email);
 	}
@@ -328,7 +328,7 @@ function ChangePassword(old_password, new_password) {
 
 	if (IsNotEmptyString(new_password)) {
 		if (IsNotEmptyString(old_password)) {
-			let old_hashed_password = CryptoJS.SHA256(old_password);
+			let old_hashed_password = HashText(old_password);
 			if (old_hashed_password !== current_user_data.password) {
 				ShowFormError('Password is incorrect.');
 			} else {
@@ -343,7 +343,13 @@ function ChangePassword(old_password, new_password) {
 }
 //#endregion
 
-//#region Helper methods
+//#region Helper functions
+function HashText(text) {
+	return CryptoJS.SHA256(text).toString();
+}
+//#endregion
+
+//#region UI Helper methods
 function CollapseAllForms() {
 	const forms = document.querySelectorAll('FORM');
 	for (let form of forms) {
