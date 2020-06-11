@@ -241,6 +241,8 @@ function CreateToDoList() {
 //#region Account settings
 function ShowAccountSettings(){
 
+	CollapseAllForms();
+	CollapseElement(dashboard);
 	ShowElement(account_settings);
 	
 	if (current_user_data) {
@@ -260,47 +262,84 @@ function ChangeAccountSettings(event){
 	console.log(event);
 	form = event.srcElement;
 
-	//get data from form/event
-	//validate name, surname
-	//if new_password is not null
 	const new_name = form['name'];
 	const new_surname = form['surname'];
-	const new_email = form['email'];
+	const new_user_data = current_user_data;
+	const old_email = current_user_data.email;
 
-	if (IsEmptyString(new_name)) {
+	if (!new_name) {
 		ShowFormError('First name cannot be empty.');
 		return;
-	} else if (IsNotEmptyString(surname)) {
+	} else {
+		new_user_data.name = new_name;
+	}
+	
+	if (!new_surname) {
 		ShowFormError('Surname cannot be empty.');
 		return;
-	} else if (IsNotEmptyString(email)) {
-		ShowFormError('Email cannot be empty.');
-		return;
+	} else {
+		new_user_data.surname = new_surname;
 	}
 
-	SavePassword(form['password'], form['new_password']);
+	new_password = ChangePassword(form['password'], form['new_password']);
+	if (!new_password){
+		new_user_data.password = CryptoJS.SHA256();
+	}
 	
+	console.log("email value: " + form['email'].value + " typ: " + typeof(form['email'].value));
 
-	localStorage.setItem(current_user_data['email'], current_user_data);
-	//hhow to handle email change?
+	new_user_data.email = ChangeEmail(current_user_data.email, form['email'].value);
+	localStorage.setItem(new_user_data.email, JSON.stringify(new_user_data));
+	localStorage[new_user_data.email].name = "CATTTTTTTTTTTTTTTTTTT";// JSON.stringify(new_user_data));
+	if (new_user_data.email !== old_email) {
+		localStorage.removeItem(old_email);
+	}
+
+	console.log("\nnew user data: " + JSON.stringify(new_user_data) + "\n");
+
+	current_user_data = new_user_data;
+	ShowAccountSettings();
 }
 
-function SavePassword(current_password_hash, new_password) {
+function ChangeEmail(old_email, new_email) {
+
+	if (!new_email) {
+		ShowFormError('Email cannot be empty.');
+	} else if (new_email !== old_email) {
+		if (localStorage.getItem(new_email) != null) {
+			ShowFormError('Email is already taken by another user.');
+		} else {
+			console.log("Trying to change user's email from " + old_email + " to " + new_email);
+			//current_user_data.email = new_email;
+			//localStorage.setItem(new_email, JSON.stringify(current_user_data));
+			//localStorage.removeItem(old_email);
+			console.log("Removed old user in localStorage: " + localStorage.getItem(old_email));
+			console.log("Changed user's email from " + old_email + " to " + new_email);
+			return new_email;
+		}
+	} else {
+		console.log("No change in user's email. " + old_email + " === " + new_email);
+	}
+
+	return old_email;
+}
+
+function ChangePassword(old_password, new_password) {
 
 	if (IsNotEmptyString(new_password)) {
-		const password = current_password_hash;
-		if (IsNotEmptyString(password)) {
-
-			let new_hashed_password = CryptoJS.SHA256(password);
-			if (new_hashed_password !== current_user_data['password']) {
-				ShowFormError('Current password is incorrect.');
+		if (IsNotEmptyString(old_password)) {
+			let old_hashed_password = CryptoJS.SHA256(old_password);
+			if (old_hashed_password !== current_user_data.password) {
+				ShowFormError('Password is incorrect.');
 			} else {
-				current_user_data['password'] = CryptoJS.SHA256(new_password);
+				return new_password;
 			}
 		} else {
 			ShowFormError('Enter the current password to change it.');
 		}
 	}
+
+	return old_password;
 }
 //#endregion
 
@@ -342,12 +381,16 @@ function noneById(id) {
 	document.getElementById(id).style.display = 'none';
 }
 
+function Trim(x) {
+	return x.replace(/^\s+|\s+$/gm,'');
+}
+
 function IsNotEmptyString(str) {
-	return str && str.trim().length > 0;
+	return str && str.length > 0;
 }
 
 function IsEmptyString(str) {
-	return !str || str.trim().length === 0;
+	return !str || Trim(str).length === 0;
 }
 
 function setClassVisible(className, visible) {

@@ -39,11 +39,11 @@
         <div class="formContainer">
           <div class="inputWrapper">
             <div class="inputLabel">First Name</div>
-            <input type="text" name="firstName" placeholder="Your name" required/>
+            <input type="text" name="firstName" placeholder="Your name" required pattern=".*\S.*"/>
           </div>
           <div class="inputWrapper">
             <div class="inputLabel">Last Name</div>
-            <input type="text" name="lastName" placeholder="Last name" required/>
+            <input type="text" name="lastName" placeholder="Last name" required pattern=".*\S.*"/>
           </div>
           <div class="inputWrapper">
             <div class="inputLabel">Email</div>
@@ -92,16 +92,16 @@
       <button onclick="SaveLists()">SAVE</button>
     </div>
 
-   <div>
+   <div class="loggedIn">
       <form id="account_settings_form" method="POST">
         <div class="formError"></div>
         <div class="inputWrapper">
           <div class="inputLabel">First Name</div>
-          <input type="text" id="name" name="firstName" placeholder="Your name" />
+          <input type="text" id="name" name="firstName" placeholder="Your name" required pattern=".*\S.*"/>
         </div>
         <div class="inputWrapper">
           <div class="inputLabel">Last Name</div>
-          <input type="text" id="surname" name="lastName" placeholder="Last name" />
+          <input type="text" id="surname" name="lastName" placeholder="Last name" required pattern=".*\S.*"/>
         </div>
         <div class="inputWrapper">
           <div class="inputLabel">Email</div>
@@ -115,10 +115,9 @@
           <div class="inputLabel">New Password</div>
           <input type="password" name="new_password" placeholder="Make it a good one!"/>
         </div>
-        <div class="inputWrapper">
           
         <div class="inputWrapper ctaWrapper">
-          <button type="submit" class="cta green">Save Changes</button>
+          <button type="submit" class="green">Save Changes</button>
         </div>
       </form>
     </div>

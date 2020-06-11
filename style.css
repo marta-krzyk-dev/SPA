@@ -102,7 +102,7 @@ ul {
   padding: 0;
   overflow: hidden;
   background-color: #333;
-  position: fixed;
+  /*position: fixed;*/
   top: 0;
   width: 100%;
 }
@@ -120,7 +120,7 @@ li a {
 }
 
 li a:hover:not(.active) {
-  background-color: #111;
+  background-color: #5472c0;
   cursor: pointer;
 }
 
@@ -169,7 +169,7 @@ h1 {
     align-items: center;
     justify-content: center;
 }
-
+/*
 .cta, a.cta:hover, a.cta:active, a.cta:visited, button.cta:hover, button.cta:active, button.cta:visited {
     background-color: #1a1a1a;
     color: #fff;
@@ -200,7 +200,7 @@ h1 {
 
     .cta.red {
         background-color: #c83737 !important;
-    }
+    }*/
 
 .warning {
     font-style: italic;
@@ -321,7 +321,7 @@ div, span {
   margin: 10px 40px 10px 40px;
 }
 
-desc {
+.desc {
     text-align: center;
     color:white;
     display: table-cell;
