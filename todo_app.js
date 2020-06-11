@@ -1,7 +1,7 @@
 //#region Global variables
 var taskList;
 var current_user_data = null;
-var sign_form, log_in_form, error_message, signed_up_message, dashboard, account_settings, no_lists_message;
+var sign_form, log_in_form, error_message, dashboard, account_settings, no_lists_message, log_panel;
 //#endregion
 
 //#region Site loaded
@@ -9,11 +9,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	//SET GLOBAL VARIABLES
 	taskList = document.getElementById('tasks');
-	let log_panel = document.getElementById('logging');
+	log_panel = document.getElementById('logging');
 	sign_form = log_panel.querySelector('#sign_up_form');
 	log_in_form = log_panel.querySelector('#log_in_form');
-	error_message = log_panel.querySelector('#error_message');
-	signed_up_message = log_panel.querySelector('#signed_up_message');
+	error_message = log_panel.querySelector('#error_message');//unused?
 	dashboard = document.getElementById("dashboard");
 	no_lists_message = document.getElementById("no_lists_message");
 	account_settings = document.getElementById('account_settings_form');
@@ -45,23 +44,18 @@ window.addEventListener('DOMContentLoaded', () => {
 //#endregion
 
 //#region Form-related methods
-function ShowLoggingError(message) {
+function ShowFormError(message) {
 	
-	ShowElement(error_message);
+	error_message = log_panel.querySelector('.formError');
 	error_message.innerText = message;
-}
-
-function ShowSignUpMessage(message) {
-
-	ShowElement(signed_up_message);
-	signed_up_message.innerText = message;
+	ShowElement(error_message);
 }
 
 function CheckIfStringsNotEmpty(names, ...elems) {
 
 	for(i=0; i < names.length; ++i) {
 		if (!elems[i]) {
-			ShowLoggingError(names[i] + ' is empty.');
+			ShowFormError(names[i] + ' is empty.');
 			return false;
 		}
 	}
@@ -89,26 +83,26 @@ function ShowLogInForm() {
 //#region Methods for listeners
 function Register(event){
 	event.preventDefault();
-	CollapseElements(error_message, signed_up_message);
+	CollapseElements(error_message);
 
 	const agreed_to_terms = sign_form[4].checked;
 	console.log("Agreed to terms: "  + agreed_to_terms)
 
 	if (!agreed_to_terms) {
-		ShowLoggingError('You have to agree with Terms of Use.');
+		ShowFormError('You have to agree with Terms of Use.');
 		return;
 	}
 
 	const email = sign_form[2].value;
 	if (!email) {
-		ShowLoggingError('Email is empty.');
+		ShowFormError('Email is empty.');
 		return;
 	}
 	const user = JSON.parse(localStorage.getItem(email));
 	console.log("user read : " + user)
 
 	if(user) {
-		ShowLoggingError('The user with this email already exists');
+		ShowFormError('The user with this email already exists');
 	}
 	else {
 		const name = sign_form[0].value;
@@ -123,19 +117,21 @@ function Register(event){
 			'name' : name,
 			'surname' : surname,
 			'password' : CryptoJS.SHA256(password).toString(),
-			'lists' : null
+			'lists' : []
 		};
 
 		console.log('Hashed password to ' + CryptoJS.SHA256(password));
 
 		try {
 			localStorage.setItem(email, JSON.stringify(user_data));
-			ShowSignUpMessage('Your account was created, please log in!');
 			console.log("Registered: " + email);
-			current_user_data = user;
-			DisplayDashboard();
+			current_user_data = user_data;
+			setClassVisible('loggedIn', true);
+			setClassVisible('loggedOut', false);
+			DisplayDashboard(current_user_data.lists);
 		} catch (error) {
-			ShowLoggingError('Error while signing up.');
+			ShowFormError('Error while signing up.');
+			console.log("Error while signing up: " + error);
 		}
 	}
 }
@@ -163,13 +159,15 @@ function LogIn(event){
 			setClassVisible('loggedOut', false);
 			current_user_data = user;
 
+			console.log("Current user data: " + user.toString());
+
 			DisplayDashboard(user.lists);
 		} else {
-			ShowLoggingError('Incorrect password!');
+			ShowFormError('Incorrect password!');
 		}
 	}
 	else {
-		ShowLoggingError('User does not exist.');
+		ShowFormError('User does not exist.');
 	}
 }
 
@@ -181,13 +179,16 @@ function LogOut() {
 //#endregion
 
 //#region Dashboard
-function DisplayDashboard(data = null) {
+//TODO should it get data? or get data from global variable?
+function DisplayDashboard(data) {
+	console.log("Display dashboard");
 	CollapseAllForms();
 	ShowElement(dashboard);
 	//Load data from user
 	//create div for lists
 
 	if (!data || data.length === 0) {
+		console.log("no_lists_message : " + no_lists_message.toString())
 		ShowElement(no_lists_message);
 		return;
 	} else {
@@ -267,13 +268,13 @@ function ChangeAccountSettings(event){
 	const new_email = form['email'];
 
 	if (IsEmptyString(new_name)) {
-		ShowLoggingError('First name cannot be empty.');
+		ShowFormError('First name cannot be empty.');
 		return;
 	} else if (IsNotEmptyString(surname)) {
-		ShowLoggingError('Surname cannot be empty.');
+		ShowFormError('Surname cannot be empty.');
 		return;
 	} else if (IsNotEmptyString(email)) {
-		ShowLoggingError('Email cannot be empty.');
+		ShowFormError('Email cannot be empty.');
 		return;
 	}
 
@@ -292,12 +293,12 @@ function SavePassword(current_password_hash, new_password) {
 
 			let new_hashed_password = CryptoJS.SHA256(password);
 			if (new_hashed_password !== current_user_data['password']) {
-				ShowLoggingError('Current password is incorrect.');
+				ShowFormError('Current password is incorrect.');
 			} else {
 				current_user_data['password'] = CryptoJS.SHA256(new_password);
 			}
 		} else {
-			ShowLoggingError('Enter the current password to change it.');
+			ShowFormError('Enter the current password to change it.');
 		}
 	}
 }
@@ -311,6 +312,8 @@ function CollapseAllForms() {
 	}
 
 	document.getElementById('logging').style.display = 'block';
+
+	CollapseElement(error_message);
 }
 
 function ShowById(id) {
