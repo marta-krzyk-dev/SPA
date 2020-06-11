@@ -17,6 +17,7 @@
       <li class="loggedOut"><a onclick="ShowLogInForm()">Log In</a></li>
       <li class="loggedIn"><a style="color:aliceblue" onclick="LogOut()">Logout</a></li>
       <li class="loggedIn"><a onclick="ShowAccountSettings()">Account settings</a></li>
+      <li class="loggedIn"><a onclick="ShowDashboard()">Dashboard</a></li>
     </ul>
 
     <header class="show_on_start loggedOut">
@@ -32,9 +33,9 @@
         </div>
     </header>
 
+    <div class="message formError" id="error_message"></div>
+
     <div id="logging" class="mainContainer loggedOut">
-      <div class="message formError" id="error_message"></div>
-      
       <form  id="sign_up_form" method="POST">
         <div class="formContainer">
           <div class="inputWrapper">
@@ -76,13 +77,12 @@
           <button type="submit" class="green">Log In</button>
         </div>
       </form>
-
-   
     </div>
+
     <div class="dashboard loggedIn" id="dashboard">
      
       <title>TO DO lists</title>
-      <span id="no_lists_message">You have no TODO lists.</span>
+      <span id="no_lists_message">You have no lists.</span>
       <form id="new_task_form" method="POST">
         <input id="input_new_task" />
         <button type="submit">Add</button>
@@ -94,7 +94,10 @@
 
    <div class="loggedIn">
       <form id="account_settings_form" method="POST">
-        <div class="formError"></div>
+        <div class="inputWrapper ctaWrapper">
+          <div class="message formError" id="error_message_settings">YAHOOOOO</div>
+        </div>
+
         <div class="inputWrapper">
           <div class="inputLabel">First Name</div>
           <input type="text" id="name" name="firstName" placeholder="Your name" required pattern=".*\S.*"/>

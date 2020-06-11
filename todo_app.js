@@ -1,7 +1,7 @@
 //#region Global variables
 var taskList;
 var current_user_data = null;
-var sign_form, log_in_form, error_message, dashboard, account_settings, no_lists_message, log_panel;
+var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel;
 //#endregion
 
 //#region Site loaded
@@ -12,17 +12,18 @@ window.addEventListener('DOMContentLoaded', () => {
 	log_panel = document.getElementById('logging');
 	sign_form = log_panel.querySelector('#sign_up_form');
 	log_in_form = log_panel.querySelector('#log_in_form');
-	error_message = log_panel.querySelector('#error_message');//unused?
+	error_message = document.querySelector('#error_message');
+	error_message_settings = document.querySelector('#error_message_settings');
 	dashboard = document.getElementById("dashboard");
 	no_lists_message = document.getElementById("no_lists_message");
-	account_settings = document.getElementById('account_settings_form');
+	account_settings_form = document.getElementById('account_settings_form');
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
 	log_in_form.addEventListener("submit", LogIn);
 	const new_task_form = document.getElementById("new_task_form");
 	new_task_form.addEventListener("submit", addToList);
-	account_settings.addEventListener("submit", ChangeAccountSettings);
+	account_settings_form.addEventListener("submit", ChangeAccountSettings);
 
 	//show header
 	document.body.querySelector('HEADER').style.display = 'block';
@@ -34,23 +35,17 @@ window.addEventListener('DOMContentLoaded', () => {
 	setClassVisible('loggedIn', false);
 	setClassVisible('loggedOut', true);
 	CollapseAllForms();
-
-	//Initialize global storage
-	// window.localStorage - stores data with no expiration date
-	
-	var hashed_password = HashText("abc");
-	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": null}));
 });
 //#endregion
 
 //#region Form-related methods
 function ShowFormError(message) {
 	
-	error_message = log_panel.querySelector('.formError');
+	console.log("error message is " + JSON.stringify(error_message));
 	error_message.innerText = message;
 	ShowElement(error_message);
 }
-
+//TODO remove this func
 function CheckIfStringsNotEmpty(names, ...elems) {
 
 	for(i=0; i < names.length; ++i) {
@@ -128,7 +123,7 @@ function Register(event){
 			current_user_data = user_data;
 			setClassVisible('loggedIn', true);
 			setClassVisible('loggedOut', false);
-			DisplayDashboard(current_user_data.lists);
+			ShowDashboard(current_user_data.lists);
 		} catch (error) {
 			ShowFormError('Error while signing up.');
 			console.log("Error while signing up: " + error);
@@ -150,10 +145,10 @@ function LogIn(event){
 	console.log('User read in log in  : ' + user);
 
 	let hash = HashText(password);
-	console.log('CryptoJS.SHA256(password):\n' + hash);
+	console.log('LogIn hashed password attempted:\n' + hash);
 	
 	if (user) {
-		if (user.password == hash.toString()) {
+		if (user.password === hash) {
 			console.log('Logged in.');
 			setClassVisible('loggedIn', true);
 			setClassVisible('loggedOut', false);
@@ -161,7 +156,7 @@ function LogIn(event){
 
 			console.log("Current user data: " + user.toString());
 
-			DisplayDashboard(user.lists);
+			ShowDashboard(user.lists);
 		} else {
 			ShowFormError('Incorrect password!');
 		}
@@ -180,7 +175,7 @@ function LogOut() {
 
 //#region Dashboard
 //TODO should it get data? or get data from global variable?
-function DisplayDashboard(data) {
+function ShowDashboard(data) {
 	console.log("Display dashboard");
 	CollapseAllForms();
 	ShowElement(dashboard);
@@ -242,17 +237,17 @@ function CreateToDoList() {
 function ShowAccountSettings(){
 
 	CollapseAllForms();
-	CollapseElement(dashboard);
-	ShowElement(account_settings);
+	CollapseElements(dashboard, error_message_settings, error_message);
+	ShowElement(account_settings_form);
 	
 	if (current_user_data) {
-		console.log('account_settings.elements ' + account_settings);
+		console.log('account_settings.elements ' + account_settings_form);
 		console.log('current use data: ' + JSON.stringify(current_user_data))
-		account_settings['name'].value = current_user_data['name'];
-		account_settings['surname'].value = current_user_data['surname'];
-		account_settings['email'].value = current_user_data['email'];
+		account_settings_form['name'].value = current_user_data['name'];
+		account_settings_form['surname'].value = current_user_data['surname'];
+		account_settings_form['email'].value = current_user_data['email'];
 	} else {
-		account_settings.querySelector('.formError').innerText = "Cannot load user's account settings. Try again later.";
+		account_settings_form.querySelector('.formError').innerText = "Cannot load user's account settings. Try again later.";
 	}
 }
 
@@ -261,28 +256,23 @@ function ChangeAccountSettings(event){
 	console.log("ChangeAccountSettings  " + JSON.stringify(event));
 	console.log(event);
 	form = event.srcElement;
+	CollapseElement(error_message_settings);
 
 	const new_name = form['name'].value;
 	const new_surname = form['surname'].value;
 	const new_user_data = current_user_data;
 	const old_email = current_user_data.email;
+	const new_email = form['email'].value;
 
-	if (!new_name) {
-		ShowFormError('First name cannot be empty.');
-		return;
-	} else {
-		new_user_data.name = new_name;
-	}
-	
-	if (!new_surname) {
-		ShowFormError('Surname cannot be empty.');
-		return;
-	} else {
-		new_user_data.surname = new_surname;
-	}
+	if (!CheckIfStringsNotEmpty(['Name','Surname','Password'], new_name, new_surname, new_email))
+			return;
+
+	new_user_data.name = new_name;
+	new_user_data.surname = new_surname;
 
 	const new_password = ChangePassword(form['password'].value, form['new_password'].value);
-	if (!new_password){
+	if (new_password !== null){
+		console.log("CHanging password to "+ new_password);
 		new_user_data.password = HashText(new_password); 
 	}
 	
@@ -290,7 +280,7 @@ function ChangeAccountSettings(event){
 
 	new_user_data.email = ChangeEmail(current_user_data.email, form['email'].value);
 	localStorage.setItem(new_user_data.email, JSON.stringify(new_user_data));
-	//localStorage[new_user_data.email].name = "CATTTTTTTTTTTTTTTTTTT";// JSON.stringify(new_user_data));
+	
 	if (new_user_data.email !== old_email) {
 		localStorage.removeItem(old_email);
 	}
@@ -301,12 +291,19 @@ function ChangeAccountSettings(event){
 	ShowAccountSettings();
 }
 
+function ShowSettingsFormError(message) {
+	
+	error_message_settings.innerText = message;
+	ShowElement(error_message_settings);
+}
+
 function ChangeEmail(old_email, new_email) {
 
 	if (!new_email) {
 		ShowFormError('Email cannot be empty.');
 	} else if (new_email !== old_email) {
 		if (localStorage.getItem(new_email) != null) {
+			console.log('Email is already taken by another user.');
 			ShowFormError('Email is already taken by another user.');
 		} else {
 			console.log("Trying to change user's email from " + old_email + " to " + new_email);
@@ -339,7 +336,7 @@ function ChangePassword(old_password, new_password) {
 		}
 	}
 
-	return old_password;
+	return null;
 }
 //#endregion
 
@@ -358,7 +355,7 @@ function CollapseAllForms() {
 
 	document.getElementById('logging').style.display = 'block';
 
-	CollapseElement(error_message);
+	//CollapseElement(error_message);
 }
 
 function ShowById(id) {

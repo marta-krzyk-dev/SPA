@@ -141,7 +141,7 @@ li a:hover:not(.active) {
 
 .loggedIn {
   visibility: collapse;
-  display: inline-block;
+  /*display: inline-block;*/
 }
 
 .loggedOut {
@@ -220,10 +220,8 @@ h1 {
     padding: 15px 15px;
     margin: 0 0 15px 0;
     text-align: center;
-    border-color: #d87070;
     border-width: 0px;
-    border-style: solid;
-    width:100%;
+   /* width:100%;*/
 }
 
 .formSuccess {
@@ -319,6 +317,10 @@ div, span {
   color: darkblue;
   width: auto;
   margin: 10px 40px 10px 40px;
+}
+
+span {
+  background-color: whitesmoke;
 }
 
 .desc {
