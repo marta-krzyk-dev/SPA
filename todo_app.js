@@ -1,7 +1,8 @@
 //#region Global variables
 var taskList;
 var current_user_data = null;
-var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel;
+var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel,
+show_lists_button, list_editor;
 //#endregion
 
 //#region Site loaded
@@ -17,25 +18,46 @@ window.addEventListener('DOMContentLoaded', () => {
 	dashboard = document.getElementById("dashboard");
 	no_lists_message = document.getElementById("no_lists_message");
 	account_settings_form = document.getElementById('account_settings_form');
+	show_lists_button = dashboard.querySelector("#show_lists_button");
+	list_editor = dashboard.querySelector("#list_editor");
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
 	log_in_form.addEventListener("submit", LogIn);
-	const new_task_form = document.getElementById("new_task_form");
-	new_task_form.addEventListener("submit", addToList);
+	//const new_task_form = document.getElementById("new_task_form");
+	//new_task_form.addEventListener("submit", addToList);
 	account_settings_form.addEventListener("submit", ChangeAccountSettings);
 
 	//show header
 	document.body.querySelector('HEADER').style.display = 'block';
 	//hide dashboard elements
-	document.getElementById('dashboard').style.display = 'none';
+	dashboard.style.display = 'none';
 	log_panel.style.display = 'none';
 
 	//Set Visibility
 	setClassVisible('loggedIn', false);
 	setClassVisible('loggedOut', true);
 	CollapseAllForms();
+
+	CreateExampleUser();
 });
+
+function CreateExampleUser() {
+	let hashed_password = CryptoJS.SHA256("abc").toString();
+	let lists = [ 
+		{
+			"created" : Date.now(),
+			"name" : "things to do",
+			"items" : [ 
+				{ "text" : "Fry eggs", "checked" : false },
+				{ "text" : "Cook potatoes", "checked" : false },
+				{ "text" : "Play with cat", "checked" : true }
+			]
+		}
+	];
+	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": lists}));
+
+}
 //#endregion
 
 //#region Form-related methods
@@ -179,30 +201,73 @@ function ShowDashboard(data) {
 	console.log("Display dashboard");
 	CollapseAllForms();
 	ShowElement(dashboard);
-	//Load data from user
-	//create div for lists
+	CollapseElements(show_lists_button, list_editor);
+	
+	console.log("ShowDashboard data: "+ JSON.stringify(data));
+
 
 	if (!data || data.length === 0) {
-		console.log("no_lists_message : " + no_lists_message.toString())
 		ShowElement(no_lists_message);
 		return;
 	} else {
 		CollapseElement(no_lists_message);
 	}
 
+	const listUL = document.querySelector('#listUL');
 	for(list of data) {
-		let listDiv = document.createElement('UL');
-		listDiv.classList.add('TODOlist');
+		for(item of list.items) {
+			let li = document.createElement("LI");
+			li.innerText = item.text;
+			listUL.appendChild(li);
 
-		innerHTML = "";
-		for(item of list) {
-			innerHTML += `<li>${item.text}</li>`;
+			//put children inside li
+			let span = document.createElement("SPAN");
+			let txt = document.createTextNode("\u00D7");
+			span.className = "close";
+			span.appendChild(txt);
+			li.appendChild(span);
+			li.classList.add("dashboard");
 		}
-		let checkBox = document.createElement('CHECKBOX');
-		let textBox = document.createElement('RICHTEXTBOX');
+	}
 
-		listDiv.innerHTML = "<input class=\"list_title\" text=\"title\">LIST TITLE</input><li><input type=\"checkbox\"\/><input type=\"text\"></input></li>";
-		dashboard.appendChild(listDiv);
+
+var close = document.getElementsByClassName("close");
+var i;
+for (i = 0; i < close.length; i++) {
+  close[i].onclick = function() {
+    var div = this.parentElement;
+    div.style.display = "none";
+  }
+}
+// Add a "checked" symbol when clicking on a list item
+listUL.addEventListener('click', function(ev) {
+  if (ev.target.tagName === 'LI') {
+    ev.target.classList.toggle('checked');
+  }
+}, false);
+}
+
+function CreateList(list) {
+	var myNodelist = document.getElementsByTagName("LI");
+
+
+		var i;
+		for (i = 0; i < myNodelist.length; i++) {
+		var span = document.createElement("SPAN");
+		var txt = document.createTextNode("\u00D7");
+		span.className = "close";
+		span.appendChild(txt);
+		myNodelist[i].appendChild(span);
+		}
+
+		// Click on a close button to hide the current list item
+		var close = document.getElementsByClassName("close");
+		var i;
+		for (i = 0; i < close.length; i++) {
+		close[i].onclick = function() {
+			var div = this.parentElement;
+			div.style.display = "none";
+		}
 	}
 }
 
@@ -228,9 +293,12 @@ function CreateToDoList() {
 	console.log("CreateToDoList");
 	//Create list title input
 	//create 1 checkbox + text input
-	
+
+	//show  list_editor with no params
+	ShowElement(list_editor);
 	addToList();
 };
+
 //#endregion
 
 //#region Account settings
@@ -351,6 +419,7 @@ function CollapseAllForms() {
 	const forms = document.querySelectorAll('FORM');
 	for (let form of forms) {
 		form.style.display = 'none';
+		console.log("Collapsing form " + form.id);
 	}
 
 	document.getElementById('logging').style.display = 'block';

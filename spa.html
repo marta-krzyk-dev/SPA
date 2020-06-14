@@ -14,10 +14,10 @@
 
   <body>
     <ul class="menu">
-      <li class="loggedOut"><a onclick="ShowLogInForm()">Log In</a></li>
-      <li class="loggedIn"><a style="color:aliceblue" onclick="LogOut()">Logout</a></li>
-      <li class="loggedIn"><a onclick="ShowAccountSettings()">Account settings</a></li>
-      <li class="loggedIn"><a onclick="ShowDashboard()">Dashboard</a></li>
+      <li class="menuItem loggedOut"><a onclick="ShowLogInForm()">Log In</a></li>
+      <li class="menuItem loggedIn"><a style="color:aliceblue" onclick="LogOut()">Logout</a></li>
+      <li class="menuItem loggedIn"><a onclick="ShowAccountSettings()">Account settings</a></li>
+      <li class="menuItem loggedIn"><a onclick="ShowDashboard()">Dashboard</a></li>
     </ul>
 
     <header class="show_on_start loggedOut">
@@ -26,7 +26,6 @@
         Immerse yourself into the world of effective task-smashing with this
         innovate task-tracking tool. <br />
         Start your journey into new life of concious planning now!</span>
-
         <div class="clearfix">
           <button id="log_in" class="halfScreenButton" onclick="ShowLogInForm()">Log in</button>
           <button id="sign_up" class="halfScreenButton" onclick="ShowSignUpForm()">Sign up</button>
@@ -79,23 +78,39 @@
       </form>
     </div>
 
-    <div class="dashboard loggedIn" id="dashboard">
-     
-      <title>TO DO lists</title>
-      <span id="no_lists_message">You have no lists.</span>
-      <form id="new_task_form" method="POST">
-        <input id="input_new_task" />
-        <button type="submit">Add</button>
-      </form>
+    <div class="loggedIn container dashboard" id="dashboard">
 
-      <button onclick="CreateToDoList()">Create a New to-do List</button>
-      <button onclick="SaveLists()">SAVE</button>
+      <div id="main_list_dashboard">
+        <span id="no_lists_message">You have no lists.</span>
+        <button id="show_lists_button" onclick="ShowDashboard()" style="float: left;">SHOW LISTS</button>
+        <button id="new_list_button" onclick="CreateToDoList()" style="float: right;">NEW LIST</button>
+      </div>
+
+      <div id="list_editor" style="display: block;">
+        <div class="listHeader">
+          <button onclick="SaveList()" style="float: right;">SAVE LIST</button>
+          <input type="text" id="listName" placeholder="List name...">
+            
+          <div style="vertical-align: middle;">
+
+          <button onclick="newElement()" style="float:right; margin:0px">ADD</button>
+          <span style="
+            display: block;
+            overflow: hidden;
+            padding-right:10px;margin:0px;">
+           
+          <input type="text" id="myInput" placeholder="New task..." style="width: 100%;margin:0px;"></span>
+         </div>
+        </div>
+
+        <ul id="listUL" class="taskList"></ul>
+      </div>
     </div>
 
    <div class="loggedIn">
       <form id="account_settings_form" method="POST">
         <div class="inputWrapper ctaWrapper">
-          <div class="message formError" id="error_message_settings">YAHOOOOO</div>
+          <div class="message formError" id="error_message_settings"></div>
         </div>
 
         <div class="inputWrapper">
