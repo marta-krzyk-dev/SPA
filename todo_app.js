@@ -9,7 +9,7 @@ show_lists_button, list_editor, main_list_dashboard, listUL, taskList;
 window.addEventListener('DOMContentLoaded', () => {
 
 	//SET GLOBAL VARIABLES
-	taskList = document.getElementById('tasks');
+	//taskList = document.getElementById('tasks');
 	log_panel = document.getElementById('logging');
 	sign_form = log_panel.querySelector('#sign_up_form');
 	log_in_form = log_panel.querySelector('#log_in_form');
@@ -63,9 +63,9 @@ function CreateExampleUser() {
 			"created" : Date.now(),
 			"name" : "css",
 			"items" : [ 
-				{ "text" : "css study", "checked" : true },
-				{ "text" : "Cook potatoes", "checked" : false },
-				{ "text" : "Play with cat", "checked" : true }
+				{ "text" : "Css study", "checked" : true },
+				{ "text" : "Understand pseudo classes", "checked" : false },
+				{ "text" : "Child combinator selector", "checked" : true }
 			]
 		}
 	];
@@ -269,6 +269,45 @@ ul.addEventListener('click', function(ev) {
 }, false);*/
 }
 
+function SaveList() {
+	//check is name is still unique
+
+	const list_name = listName.value;
+	const name_unique = current_user_data.lists.some(l => l.name === list_name);
+
+	//if not show alert
+	//check is not empty
+	if (!name_unique) {
+		alert("The list name already exists. Choose another name.");
+		return;
+	}
+
+	//get tasks
+
+	const tasks = ConvertToTaskList(taskList);
+	//create object
+	const list_old_name; //!!!!!!!!!!!!!
+	const list_exists = current_user_data.lists.some(l => l.name === list_old_name);
+	if (list_exists) {
+		//Change the data is local storage
+	}
+	const new_list = { "created" : Date.now(), "name" : new_name, "items" : tasks };
+}
+function ConvertToTaskList(ul) {
+
+	const array = [];
+	for(const li of ul) {
+		array.add({
+			"text" : li.innerText,
+			"checked" : li.classList.some(c => c === "checked")
+		});
+	}
+
+	console.log("ConvertToTaskList");
+	console.log(array);
+	return array;
+}
+
 function PopulateListUL(listy, ul) {
 
 	//Clear elements
@@ -287,7 +326,9 @@ function PopulateListUL(listy, ul) {
 		span.onclick = function() {};
 		li.appendChild(span);
 
-		span.onclick = () => {
+		span.onclick = (event) => {
+			console.log(event);
+
 			if (confirm(`Are you sure you want to delete list "${li.id}"?`)) {
 
 				const new_data = current_user_data;
@@ -302,6 +343,12 @@ function PopulateListUL(listy, ul) {
 				ShowDashboard();
 			}
 		}; 
+
+		li.onclick = (event) => {
+			let listName = event.srcElement.id;
+			let list = current_user_data.lists.find(l => l.name === listName);
+			ShowListEditor(list);
+		};
 
 		ul.appendChild(li);
 	}
@@ -382,29 +429,50 @@ function ShowElementsWithClass(class_name) {
 	}
 }
 
-function addToList(event){
-	event.preventDefault();
-	console.log(event);
-	var input = document.getElementById("input_new_task");
-	console.log(input.value);
-	const newTask = document.createElement('LI');
-	newTask.innerText = input.value;
-	taskList.appendChild(newTask);
-};
+function AddListTask(){
+	
+	var text = newTaskInput.value;
+	if (!text || text.length === 0) {
+		alert("Fill in task before adding");
+		return;
+	}
 
+	const task = { "text" : text, "checked" : false };
+	taskList.appendChild(CreateListTask(task));
+	newTaskInput.value = '';
+}
 
-function CreateToDoList(list) {
-	console.log("CreateToDoList // PopulateListEditor");
-	//Create list title input
-	//create 1 checkbox + text input
+function ShowListEditor(list) {
+	console.log("ShowListEditor " + list);
+	console.log(list);
 
-	//show  list_editor with no params
-	CollapseElements(taskList, main_list_dashboard);
-	ShowElements(list_editor);
+	CollapseElements(taskList, main_list_dashboard, listUL);
+	ShowElements(list_editor, taskList);
 
 	//flush data in list editor
-	if (!list) {
+	const inputs = list_editor.querySelectorAll('input');
+	for(const input of inputs) {
+		input.innerText = '';
+	}
+
+	taskList.innerHTML = '';
+
+	if (list) {
+		//Populate
 		console.log("Create to do list received data: " + JSON.stringify(list));
+		console.log(list_editor.querySelector('#listName'));
+		list_editor.querySelector('#listName').value = list.name;
+		
+		//add tasks
+		//const ul = dashboard.querySelector('#taskList');
+		ShowElements(taskList);
+		const items = list.items;
+		console.log(list.items);
+		for(const task of items) {
+			const newTask = CreateListTask(task);
+			taskList.appendChild(newTask);
+			console.log("Task read: " + task.text);
+		}
 	}
 };
 

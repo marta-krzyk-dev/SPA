@@ -84,7 +84,7 @@
     <div id="main_list_dashboard">
       <div class="container">
         <span id="no_lists_message">You have no lists.</span>
-        <button id="new_list_button" onclick="CreateToDoList()" style="float: right;">NEW LIST</button>
+        <button id="new_list_button" onclick="ShowListEditor()" style="float: right;">NEW LIST</button>
       </div>
     </div>
      
@@ -96,15 +96,15 @@
           <button id="show_lists_button" onclick="ShowDashboard()" style="float: left;">BACK TO DASHBOARD</button>
           <button onclick="SaveList()" style="float: right;">SAVE LIST</button>
 
-          <input type="text" id="listName" placeholder="List name...">
+          <input id="listName" type="text" placeholder="List name..."/>
 
           <div style="vertical-align: middle;">
-          <button onclick="addToList()" style="float:right; margin:0px">ADD</button>
+          <button onclick="AddListTask()" style="float:right; margin:0px">ADD</button>
           <span style="
             display: block;
             overflow: hidden;
             padding-right:10px;margin:0px;">
-          <input type="text" id="myInput" placeholder="New task..." style="width: 100%;margin:0px;"></span>
+          <input id="newTaskInput" type="text" placeholder="New task..." style="width: 100%;margin:0px;" pattern=".*\S.*"/></span>
          </div>
         </div>
 
