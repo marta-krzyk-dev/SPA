@@ -424,6 +424,10 @@ span {
   color: white;
 }
 
+#main_list_dashboard {
+  display: table;
+}
+
 .listHeader {
   background-color: midnightblue;
   padding: 30px 40px;

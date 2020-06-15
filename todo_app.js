@@ -2,7 +2,7 @@
 var taskList;
 var current_user_data = null;
 var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel,
-show_lists_button, list_editor;
+show_lists_button, list_editor, main_list_dashboard, listUL, taskList;
 //#endregion
 
 //#region Site loaded
@@ -15,11 +15,16 @@ window.addEventListener('DOMContentLoaded', () => {
 	log_in_form = log_panel.querySelector('#log_in_form');
 	error_message = document.querySelector('#error_message');
 	error_message_settings = document.querySelector('#error_message_settings');
-	dashboard = document.getElementById("dashboard");
-	no_lists_message = document.getElementById("no_lists_message");
 	account_settings_form = document.getElementById('account_settings_form');
-	show_lists_button = dashboard.querySelector("#show_lists_button");
-	list_editor = dashboard.querySelector("#list_editor");
+
+	//Dashboard elements
+	dashboard = document.getElementById('dashboard');
+	no_lists_message = dashboard.querySelector('#no_lists_message');
+	main_list_dashboard = dashboard.querySelector('#main_list_dashboard');
+	listUL = dashboard.querySelector('#listUL');
+	show_lists_button = dashboard.querySelector('#show_lists_button');
+	list_editor = dashboard.querySelector('#list_editor');	
+	taskList = dashboard.querySelector('#taskList');
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
@@ -53,6 +58,15 @@ function CreateExampleUser() {
 				{ "text" : "Cook potatoes", "checked" : false },
 				{ "text" : "Play with cat", "checked" : true }
 			]
+		},
+		{
+			"created" : Date.now(),
+			"name" : "css",
+			"items" : [ 
+				{ "text" : "css study", "checked" : true },
+				{ "text" : "Cook potatoes", "checked" : false },
+				{ "text" : "Play with cat", "checked" : true }
+			]
 		}
 	];
 	localStorage.setItem("admin@gmail.com", JSON.stringify({"email": "admin@gmail.com", "password":hashed_password, "name": "John", "surname":"Cat", "lists": lists}));
@@ -65,7 +79,7 @@ function ShowFormError(message) {
 	
 	console.log("error message is " + JSON.stringify(error_message));
 	error_message.innerText = message;
-	ShowElement(error_message);
+	ShowElements(error_message);
 }
 //TODO remove this func
 function CheckIfStringsNotEmpty(names, ...elems) {
@@ -92,7 +106,7 @@ function ShowLogInForm() {
 	
 	CollapseAllForms();
 	//log_in_form.style.display = 'block';
-	ShowElement(log_in_form);
+	ShowElements(log_in_form);
 	//ShowById('log_in_form');
 }
 //#endregion
@@ -156,7 +170,7 @@ function Register(event){
 function LogIn(event){
 	console.log("Log in ()...")
 	event.preventDefault();
-	CollapseElement(error_message);
+	CollapseElements(error_message);
 
 	email = log_in_form[0].value;
 	password = log_in_form[1].value;
@@ -200,33 +214,41 @@ function LogOut() {
 function ShowDashboard(data) {
 	console.log("Display dashboard");
 	CollapseAllForms();
-	ShowElement(dashboard);
-	CollapseElements(show_lists_button, list_editor);
+	CollapseElements(list_editor);
+	console.log("ShowDashboard  list_editor: "+ JSON.stringify(list_editor));
+	console.log("collapsed all forms dashboard");
 	
-	console.log("ShowDashboard data: "+ JSON.stringify(data));
-
+	ShowElements(dashboard, main_list_dashboard);
+	ShowElements(main_list_dashboard);
+	console.log("main_list_dashboard + " + main_list_dashboard.toString());
+	main_list_dashboard.style.visibility = "visible";
+	main_list_dashboard.style.display = "block";
+	console.log("collapsed list editor");
+	
+	data = !data ? current_user_data.lists : data;
+	console.log("ShowDashboard received data: "+ JSON.stringify(data));
 
 	if (!data || data.length === 0) {
-		ShowElement(no_lists_message);
+		ShowElements(no_lists_message);
+		CollapseElements(listUL);
+		console.log("collapsed lists");
 		return;
 	} else {
-		CollapseElement(no_lists_message);
+
+		CollapseElements(no_lists_message);
+		console.log("collapsed no_lists_message");
+
+		PopulateListUL(data, listUL);
+		ShowElements(listUL);
+		CollapseElements(list_editor);
+		//console.log("collapsed list editor");
 	}
 
-	const listUL = document.querySelector('#listUL');
+	/*
+	const ul = document.querySelector('#taskList');
 	for(list of data) {
 		for(item of list.items) {
-			let li = document.createElement("LI");
-			li.innerText = item.text;
-			listUL.appendChild(li);
-
-			//put children inside li
-			let span = document.createElement("SPAN");
-			let txt = document.createTextNode("\u00D7");
-			span.className = "close";
-			span.appendChild(txt);
-			li.appendChild(span);
-			li.classList.add("dashboard");
+			ul.appendChild( CreateListTask(item) );
 		}
 	}
 
@@ -240,11 +262,92 @@ for (i = 0; i < close.length; i++) {
   }
 }
 // Add a "checked" symbol when clicking on a list item
-listUL.addEventListener('click', function(ev) {
+ul.addEventListener('click', function(ev) {
   if (ev.target.tagName === 'LI') {
     ev.target.classList.toggle('checked');
   }
-}, false);
+}, false);*/
+}
+
+function PopulateListUL(listy, ul) {
+
+	//Clear elements
+	ul.innerHTML = "";
+
+	console.log("Creating lists: " + JSON.stringify(listy));
+	//sort by created
+	for (let list of listy) {
+		console.log("Creating li for list: " + JSON.stringify(list));
+		let li = document.createElement("LI");
+		li.innerText = li.id = list.name;
+		let span = document.createElement("SPAN");
+		let txt = document.createTextNode("\u00D7");
+		span.className = "close";
+		span.appendChild(txt);
+		span.onclick = function() {};
+		li.appendChild(span);
+
+		span.onclick = () => {
+			if (confirm(`Are you sure you want to delete list "${li.id}"?`)) {
+
+				const new_data = current_user_data;
+				if (!new_data) {
+					alert("Error while deleting list. Try again later.");
+					return;
+				}
+
+				new_data.lists = new_data.lists.filter(function(el) { return el.name != li.id; }); 
+				localStorage.setItem(current_user_data.email, JSON.stringify(new_data));
+				current_user_data = new_data;
+				ShowDashboard();
+			}
+		}; 
+
+		ul.appendChild(li);
+	}
+
+/*	var close = ul.getElementsByClassName("close");
+var i;
+for (i = 0; i < close.length; i++) {
+  close[i].onclick = function() {
+    var div = this.parentElement;
+	div.style.background_color = "red";
+	if (confirm("Are you sure you want to delete the list? parent: " + JSON.stringify(close))) {
+		console.log("Deleting list in local storage...");
+		console.log("Reload dashboard...");
+		ShowDashboard();
+	}
+	else
+		console.log("Don't delete list..");
+  }}*/
+
+}
+function DeleteTaskList(event) {
+	event.preventDefault();
+	console.log("Delete task list")
+
+	ShowDashboard();
+}
+function CreateListTask(item) {
+
+	let li = document.createElement("LI");
+	li.innerText = item.text;
+
+	let span = document.createElement("SPAN");
+	let txt = document.createTextNode("\u00D7");
+	span.className = "close";
+	span.appendChild(txt);
+	li.appendChild(span);
+			//li.classList.add("dashboard");
+	if (item.checked) {
+		li.classList.add("checked");
+	}
+
+	return li;
+}
+
+function AddNewTask() {
+
 }
 
 function CreateList(list) {
@@ -289,14 +392,20 @@ function addToList(event){
 	taskList.appendChild(newTask);
 };
 
-function CreateToDoList() {
-	console.log("CreateToDoList");
+
+function CreateToDoList(list) {
+	console.log("CreateToDoList // PopulateListEditor");
 	//Create list title input
 	//create 1 checkbox + text input
 
 	//show  list_editor with no params
-	ShowElement(list_editor);
-	addToList();
+	CollapseElements(taskList, main_list_dashboard);
+	ShowElements(list_editor);
+
+	//flush data in list editor
+	if (!list) {
+		console.log("Create to do list received data: " + JSON.stringify(list));
+	}
 };
 
 //#endregion
@@ -306,7 +415,7 @@ function ShowAccountSettings(){
 
 	CollapseAllForms();
 	CollapseElements(dashboard, error_message_settings, error_message);
-	ShowElement(account_settings_form);
+	ShowElements(account_settings_form);
 	
 	if (current_user_data) {
 		console.log('account_settings.elements ' + account_settings_form);
@@ -324,7 +433,7 @@ function ChangeAccountSettings(event){
 	console.log("ChangeAccountSettings  " + JSON.stringify(event));
 	console.log(event);
 	form = event.srcElement;
-	CollapseElement(error_message_settings);
+	CollapseElements(error_message_settings);
 
 	const new_name = form['name'].value;
 	const new_surname = form['surname'].value;
@@ -362,7 +471,7 @@ function ChangeAccountSettings(event){
 function ShowSettingsFormError(message) {
 	
 	error_message_settings.innerText = message;
-	ShowElement(error_message_settings);
+	ShowElements(error_message_settings);
 }
 
 function ChangeEmail(old_email, new_email) {
@@ -417,6 +526,7 @@ function HashText(text) {
 //#region UI Helper methods
 function CollapseAllForms() {
 	const forms = document.querySelectorAll('FORM');
+	//CollapseElements(forms);
 	for (let form of forms) {
 		form.style.display = 'none';
 		console.log("Collapsing form " + form.id);
@@ -431,38 +541,30 @@ function ShowById(id) {
 	document.getElementById(id).style.display = 'block';
 }
 
-function ShowElement(element) {
-	element.style.display = 'block';
-}
-
-function CollapseById(id) {
-
-}
-
-function CollapseElement(element) {
-	element.style.display = 'none';
+function ShowElements(...elements) {
+	for(element of elements) {
+		try {
+			console.log("Shwoing " + JSON.stringify(element));
+			element.style.display = 'block';
+		} catch (error) {
+			console.log("Eror " + error);
+		}
+	}
 }
 
 function CollapseElements(...elements) {
 	for(element of elements) {
-		element.style.display = 'none';
+		try {
+			console.log("Collapsing " + JSON.stringify(element));
+			element.style.display = 'none';
+		} catch (error) {
+			console.log("Eror " + error);
+		}
 	}
-}
-
-function noneById(id) {
-	document.getElementById(id).style.display = 'none';
-}
-
-function Trim(x) {
-	return x.replace(/^\s+|\s+$/gm,'');
 }
 
 function IsNotEmptyString(str) {
 	return str && str.length > 0;
-}
-
-function IsEmptyString(str) {
-	return !str || Trim(str).length === 0;
 }
 
 function setClassVisible(className, visible) {

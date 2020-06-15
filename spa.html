@@ -20,7 +20,7 @@
       <li class="menuItem loggedIn"><a onclick="ShowDashboard()">Dashboard</a></li>
     </ul>
 
-    <header class="show_on_start loggedOut">
+    <header class="loggedOut">
       <h1>TODOs list manager</h1>
       <span id="description" class="desc">
         Immerse yourself into the world of effective task-smashing with this
@@ -32,7 +32,7 @@
         </div>
     </header>
 
-    <div class="message formError" id="error_message"></div>
+    <div id="error_message" class="message formError"></div>
 
     <div id="logging" class="mainContainer loggedOut">
       <form  id="sign_up_form" method="POST">
@@ -78,32 +78,37 @@
       </form>
     </div>
 
-    <div class="loggedIn container dashboard" id="dashboard">
+    <div id="dashboard" class="loggedIn container dashboard">
+     
 
-      <div id="main_list_dashboard">
+    <div id="main_list_dashboard">
+      <div class="container">
         <span id="no_lists_message">You have no lists.</span>
-        <button id="show_lists_button" onclick="ShowDashboard()" style="float: left;">SHOW LISTS</button>
         <button id="new_list_button" onclick="CreateToDoList()" style="float: right;">NEW LIST</button>
       </div>
-
-      <div id="list_editor" style="display: block;">
+    </div>
+     
+      <!--div class="container" style="width: 100%;">    </!--div-->
+        <ul id="listUL" class="taskList"></ul>
+  
+      <div id="list_editor">
         <div class="listHeader">
+          <button id="show_lists_button" onclick="ShowDashboard()" style="float: left;">BACK TO DASHBOARD</button>
           <button onclick="SaveList()" style="float: right;">SAVE LIST</button>
-          <input type="text" id="listName" placeholder="List name...">
-            
-          <div style="vertical-align: middle;">
 
-          <button onclick="newElement()" style="float:right; margin:0px">ADD</button>
+          <input type="text" id="listName" placeholder="List name...">
+
+          <div style="vertical-align: middle;">
+          <button onclick="addToList()" style="float:right; margin:0px">ADD</button>
           <span style="
             display: block;
             overflow: hidden;
             padding-right:10px;margin:0px;">
-           
           <input type="text" id="myInput" placeholder="New task..." style="width: 100%;margin:0px;"></span>
          </div>
         </div>
 
-        <ul id="listUL" class="taskList"></ul>
+        <ul id="taskList" class="taskList"></ul>
       </div>
     </div>
 
