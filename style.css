@@ -248,7 +248,6 @@ input, select, option {
 }
 
 input[type=checkbox] {
-    width: auto;
     display: inline;
   }
 
