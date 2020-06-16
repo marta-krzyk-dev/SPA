@@ -35,7 +35,7 @@
     <div id="error_message" class="message formError"></div>
 
     <div id="logging" class="mainContainer loggedOut">
-      <form  id="sign_up_form" method="POST">
+      <form  id="sign_up_form" method="POST" class="form">
         <div class="formContainer">
           <div class="inputWrapper">
             <div class="inputLabel">First Name</div>
@@ -62,7 +62,7 @@
         </div>
       </form>
 
-      <form id="log_in_form" method="POST">
+      <form id="log_in_form" class="form" method="POST">
 
         <div class="inputWrapper">
           <div class="inputLabel">Email</div>
@@ -91,12 +91,12 @@
       <!--div class="container" style="width: 100%;">    </!--div-->
         <ul id="listUL" class="taskList"></ul>
   
-      <div id="list_editor">
+      <form id="list_editor" method="POST">
         <div class="listHeader">
           <button id="show_lists_button" onclick="ShowDashboard()" style="float: left;">BACK TO DASHBOARD</button>
-          <button onclick="SaveList()" style="float: right;">SAVE LIST</button>
+          <button type="submit" style="float: right;">SAVE LIST</button>
 
-          <input id="listName" type="text" placeholder="List name..."/>
+          <input id="listName" type="text" placeholder="List name..." required pattern=".*\S.*"/>
 
           <div style="vertical-align: middle;">
           <button onclick="AddListTask()" style="float:right; margin:0px">ADD</button>
@@ -109,11 +109,11 @@
         </div>
 
         <ul id="taskList" class="taskList"></ul>
-      </div>
+      </form>
     </div>
 
    <div class="loggedIn">
-      <form id="account_settings_form" method="POST">
+      <form id="account_settings_form" class="form" method="POST">
         <div class="inputWrapper ctaWrapper">
           <div class="message formError" id="error_message_settings"></div>
         </div>

@@ -4,21 +4,22 @@ Single Page Application for managing TODO list and user accounts
 A simple "to-do list" application, using client-side HTML, CSS, and Javascript only. 
 
 Features:
-- [ ] Storing user's data in localStorage
-- [ ] Password hashing using Crypto-JS minified library
-- [ ] Page never actually refreshes or reloads, the contents of the page should disappear/appear as needed
+- [x] Storing user's data in localStorage
+- [x] Password hashing using Crypto-JS minified library
+- [x] Page never actually refreshes or reloads, the contents of the page should disappear/appear as needed
 
 Here are the user-stories:
 - [ ] Create user account
-- [ ] Log in
-- [ ] Log out
-- [ ] Create a new TODO list with custom name
-- [ ] Rename a TODO list
-- [ ] Delete a TODO list
-- [ ] Add element to a TODO list
-- [ ] Remove an element in a TODO list
-- [ ] Modify an element in a TODO list
+- [x] Log in
+- [x] Log out
+- [x] Create a new TODO list with custom name
+- [x] Rename a TODO list
+- [x] Delete a TODO list
+- [x] Add element to a TODO list
+- [x] Remove an element in a TODO list
+- [x] Modify an element in a TODO list
 - [ ] Delete account?
+- [ ] Detect if there were changes when working with existing list
 
 Index
 - [x] Upon a fresh load (or refresh) of the application, the user should see the title of the application, a description, and two buttons: "Sign Up" and "Log In".
@@ -49,5 +50,5 @@ Users
 
 - [x] If the user is logged in, then at the top of the screen, on every page of the site, there should be a "log out" button. Clicking that should log the user out.
 - [x] If the user is logged in, then at the top of the screen, on every page of the site, there should be a button that says "account settings". Clicking that link should take the user to a page where they can edit any/all of the information they entered on the signup form.
-- [ ] Support as many unique users as possible.
+- [x] Support as many unique users as possible.
 - [ ] The actions that one user takes within the application should have virtually no effect on what other users are doing.

@@ -33,7 +33,7 @@ h1 {
   padding: 5px;
 }
 
-form {
+.form {
     background-color:white;
     border: 3px solid #f1f1f1;
     padding: 30px 10px 10px 10px;
@@ -44,12 +44,12 @@ form {
     overflow: hidden;
 }
 
-form div {
+.form div {
     text-align: left;
     padding: 16px; 
 }
 
-form button {
+.form button {
   margin:0px;
   width: 100%;
 }
@@ -267,9 +267,9 @@ input[type=checkbox] {
 }
 
 .inputLabel {
-    padding: 0 0 5px 0;
+    padding: 0 0 5px 0 !important;
     color: #808080;
-	text-align: left;
+	  text-align: left !important;
 }
 /* Log In and Sign Up buttons*/
 button {
@@ -409,6 +409,12 @@ span {
   transform: rotate(45deg);
   height: 15px;
   width: 7px;
+}
+
+.dashboard li input{
+  width: 80%;
+  background-color: inherit;
+  border-width: 0px;
 }
 
 /* Style the close button */

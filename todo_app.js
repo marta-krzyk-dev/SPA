@@ -1,7 +1,7 @@
 //#region Global variables
-var taskList;
 var current_user_data = null;
 var current_list_name = null;
+//Handles to UI elements
 var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel,
 show_lists_button, list_editor, main_list_dashboard, listUL, taskList;
 //#endregion
@@ -31,9 +31,15 @@ window.addEventListener('DOMContentLoaded', () => {
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
 	log_in_form.addEventListener("submit", LogIn);
+	list_editor.addEventListener("submit", SaveList);
 	//const new_task_form = document.getElementById("new_task_form");
 	//new_task_form.addEventListener("submit", addToList);
 	account_settings_form.addEventListener("submit", ChangeAccountSettings);
+	taskList.addEventListener('click', function(ev) {
+		if (ev.target.tagName === 'LI') {
+		  ev.target.classList.toggle('checked');
+		}
+	  }, false);
 
 	//show header
 	document.body.querySelector('HEADER').style.display = 'block';
@@ -236,61 +242,28 @@ function ShowDashboard(data) {
 		console.log("collapsed lists");
 		return;
 	} else {
-
 		CollapseElements(no_lists_message);
 		console.log("collapsed no_lists_message");
 
 		PopulateListUL(data, listUL);
 		ShowElements(listUL);
 		CollapseElements(list_editor);
-		//console.log("collapsed list editor");
 	}
-
-	/*
-	const ul = document.querySelector('#taskList');
-	for(list of data) {
-		for(item of list.items) {
-			ul.appendChild( CreateListTask(item) );
-		}
-	}
-
-
-var close = document.getElementsByClassName("close");
-var i;
-for (i = 0; i < close.length; i++) {
-  close[i].onclick = function() {
-    var div = this.parentElement;
-    div.style.display = "none";
-  }
-}
-// Add a "checked" symbol when clicking on a list item
-ul.addEventListener('click', function(ev) {
-  if (ev.target.tagName === 'LI') {
-    ev.target.classList.toggle('checked');
-  }
-}, false);*/
 }
 
-function SaveList() {
-	//check is name is still unique
+function SaveList(event) {
 
+	event.preventDefault();
+
+	//Check if name is unique
 	const list_name = listName.value;
 	const list_exists = current_list_name != null;
 	const name_was_changed = list_exists && list_name !== current_list_name;
 	const name_exists =  current_user_data.lists.some(l => l.name === list_name);
-
-	/*const name_not_unique = false;
-	if (list_exists) {
-		name_not_unique = name_was_changed ? name_exists : false;
-	}
-	else {
-		name_not_unique = name_exists;
-	} */
-	console.log("list exists " + list_exists + "   name was changed  " + name_was_changed + "  name exists  "+ name_exists);
 	name_not_unique = list_exists ? (name_was_changed ? name_exists : false) : name_exists;
 		
 	if (name_not_unique) {
-		alert("The list name already exists. Choose another name.");
+		alert("The list name is not unique. Choose another name.");
 		return;
 	}
 
@@ -315,23 +288,26 @@ function SaveList() {
 			"items" : tasks
 		};
 
-		current_user_data.lists.add(new_list);
+		current_user_data.lists.push(new_list);
 		localStorage.setItem(current_user_data.email, JSON.stringify(current_user_data));
 	}
+
+	current_list_name = list_name;
 }
+
 function ConvertToTaskList(ul) {
 
 	const array = [];
 	var items = ul.getElementsByTagName("li");
+
 	for(const li of items) {
+		console.log(li);
 		array.push({
-			"text" : li.innerText,
+			"text" : li.querySelector('INPUT').value,
 			"checked" : li.classList.contains("checked")
 		});
 	}
 
-	console.log("ConvertToTaskList");
-	console.log(array);
 	return array;
 }
 
@@ -350,11 +326,10 @@ function PopulateListUL(listy, ul) {
 		let txt = document.createTextNode("\u00D7");
 		span.className = "close";
 		span.appendChild(txt);
-		span.onclick = function() {};
 		li.appendChild(span);
 
 		span.onclick = (event) => {
-			console.log(event);
+			event.cancelBubble = true;
 
 			if (confirm(`Are you sure you want to delete list "${li.id}"?`)) {
 
@@ -379,45 +354,44 @@ function PopulateListUL(listy, ul) {
 
 		ul.appendChild(li);
 	}
-
-/*	var close = ul.getElementsByClassName("close");
-var i;
-for (i = 0; i < close.length; i++) {
-  close[i].onclick = function() {
-    var div = this.parentElement;
-	div.style.background_color = "red";
-	if (confirm("Are you sure you want to delete the list? parent: " + JSON.stringify(close))) {
-		console.log("Deleting list in local storage...");
-		console.log("Reload dashboard...");
-		ShowDashboard();
-	}
-	else
-		console.log("Don't delete list..");
-  }}*/
-
 }
+
 function DeleteTaskList(event) {
 	event.preventDefault();
 	console.log("Delete task list")
 
 	ShowDashboard();
 }
-function CreateListTask(item) {
+
+function AddListTaskToUL(item, ul) {
 
 	let li = document.createElement("LI");
-	li.innerText = item.text;
+	//li.innerText = item.text;
 
+	let input = document.createElement("INPUT");
+	input.value = item.text;
 	let span = document.createElement("SPAN");
 	let txt = document.createTextNode("\u00D7");
 	span.className = "close";
 	span.appendChild(txt);
+	span.onclick = (event) => {
+		event.cancelBubble = true;
+		
+		console.log(ul);
+		console.log(li);
+		//CollapseElements(event.srcElement.parentElement);
+		ul.removeChild(li);
+		//const id = event.srcElement.id;
+	}; 
+
+	li.appendChild(input);
 	li.appendChild(span);
-			//li.classList.add("dashboard");
+
 	if (item.checked) {
 		li.classList.add("checked");
 	}
 
-	return li;
+	ul.appendChild(li);
 }
 
 function AddNewTask() {
@@ -459,13 +433,12 @@ function ShowElementsWithClass(class_name) {
 function AddListTask(){
 	
 	var text = newTaskInput.value;
-	if (!text || text.length === 0) {
+	if (!text || text.length === 0) { //Check if not empty or whitespace
 		alert("Fill in task before adding");
 		return;
 	}
 
-	const task = { "text" : text, "checked" : false };
-	taskList.appendChild(CreateListTask(task));
+	AddListTaskToUL({ "text" : text, "checked" : false }, taskList);
 	newTaskInput.value = '';
 }
 
@@ -479,7 +452,7 @@ function ShowListEditor(list) {
 	//flush data in list editor
 	const inputs = list_editor.querySelectorAll('input');
 	for(const input of inputs) {
-		input.innerText = '';
+		input.value = '';
 	}
 
 	taskList.innerHTML = '';
@@ -490,14 +463,12 @@ function ShowListEditor(list) {
 		console.log(list_editor.querySelector('#listName'));
 		list_editor.querySelector('#listName').value = list.name;
 		current_list_name = list.name;
-		//add tasks
-		//const ul = dashboard.querySelector('#taskList');
+
 		ShowElements(taskList);
 		const items = list.items;
 		console.log(list.items);
 		for(const task of items) {
-			const newTask = CreateListTask(task);
-			taskList.appendChild(newTask);
+			AddListTaskToUL(task, taskList);
 			console.log("Task read: " + task.text);
 		}
 	} else {
