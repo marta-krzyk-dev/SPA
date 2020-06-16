@@ -1,6 +1,7 @@
 //#region Global variables
 var taskList;
 var current_user_data = null;
+var current_list_name = null;
 var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel,
 show_lists_button, list_editor, main_list_dashboard, listUL, taskList;
 //#endregion
@@ -25,6 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	show_lists_button = dashboard.querySelector('#show_lists_button');
 	list_editor = dashboard.querySelector('#list_editor');	
 	taskList = dashboard.querySelector('#taskList');
+	old_list_name = list_editor.querySelector('#old_list_name');
 
 	//Add listeners
 	sign_form.addEventListener("submit", Register);
@@ -273,33 +275,58 @@ function SaveList() {
 	//check is name is still unique
 
 	const list_name = listName.value;
-	const name_unique = current_user_data.lists.some(l => l.name === list_name);
+	const list_exists = current_list_name != null;
+	const name_was_changed = list_exists && list_name !== current_list_name;
+	const name_exists =  current_user_data.lists.some(l => l.name === list_name);
 
-	//if not show alert
-	//check is not empty
-	if (!name_unique) {
+	/*const name_not_unique = false;
+	if (list_exists) {
+		name_not_unique = name_was_changed ? name_exists : false;
+	}
+	else {
+		name_not_unique = name_exists;
+	} */
+	console.log("list exists " + list_exists + "   name was changed  " + name_was_changed + "  name exists  "+ name_exists);
+	name_not_unique = list_exists ? (name_was_changed ? name_exists : false) : name_exists;
+		
+	if (name_not_unique) {
 		alert("The list name already exists. Choose another name.");
 		return;
 	}
 
-	//get tasks
-
 	const tasks = ConvertToTaskList(taskList);
-	//create object
-	const list_old_name; //!!!!!!!!!!!!!
-	const list_exists = current_user_data.lists.some(l => l.name === list_old_name);
+	
 	if (list_exists) {
-		//Change the data is local storage
+		const lists = current_user_data.lists;
+		for (var i = 0; i < lists.length; ++i)
+			if (lists[i].name === current_list_name) { 
+				lists[i].name = list_name;
+				lists[i].items = tasks; 
+				break;
+			}
+		console.log("overriding list: " + JSON.stringify(current_user_data));
+		localStorage.setItem(current_user_data.email, JSON.stringify(current_user_data));
 	}
-	const new_list = { "created" : Date.now(), "name" : new_name, "items" : tasks };
+	else {
+
+		const new_list = {
+			"created" : Date.now(),
+			"name" : list_name,
+			"items" : tasks
+		};
+
+		current_user_data.lists.add(new_list);
+		localStorage.setItem(current_user_data.email, JSON.stringify(current_user_data));
+	}
 }
 function ConvertToTaskList(ul) {
 
 	const array = [];
-	for(const li of ul) {
-		array.add({
+	var items = ul.getElementsByTagName("li");
+	for(const li of items) {
+		array.push({
 			"text" : li.innerText,
-			"checked" : li.classList.some(c => c === "checked")
+			"checked" : li.classList.contains("checked")
 		});
 	}
 
@@ -462,7 +489,7 @@ function ShowListEditor(list) {
 		console.log("Create to do list received data: " + JSON.stringify(list));
 		console.log(list_editor.querySelector('#listName'));
 		list_editor.querySelector('#listName').value = list.name;
-		
+		current_list_name = list.name;
 		//add tasks
 		//const ul = dashboard.querySelector('#taskList');
 		ShowElements(taskList);
@@ -473,9 +500,10 @@ function ShowListEditor(list) {
 			taskList.appendChild(newTask);
 			console.log("Task read: " + task.text);
 		}
+	} else {
+		current_list_name = null;
 	}
 };
-
 //#endregion
 
 //#region Account settings
