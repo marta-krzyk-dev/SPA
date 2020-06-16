@@ -8,7 +8,7 @@ A simple "to-do list" application, using client-side **HTML, CSS, Javascript**.
 - [x] Password hashing using Crypto-JS minified library
 - [x] Page never actually refreshes or reloads, the contents of the page should disappear/appear as needed
 
-Here are the user-stories:
+## User-stories:
 - [x] Create user account
 - [x] Log in
 - [x] Log out
@@ -21,6 +21,8 @@ Here are the user-stories:
 - [x] Remove an element in a TODO list
 - [x] Modify an element in a TODO list
 
+![log_in](https://github.com/marta-krzyk-dev/SPA/blob/master/Printscreens/log_in_form.png?raw=true)
+![register](https://github.com/marta-krzyk-dev/SPA/blob/master/Printscreens/register_form.png?raw=true)
 
 ### Index
 - [x] Upon a fresh load (or refresh) of the application, the user should see the title of the application, a description, and two buttons: "Sign Up" and "Log In".
@@ -32,10 +34,15 @@ Here are the user-stories:
 - [x] Red error message in case of errors
 - [x] If the inputs are fine, take user to their dashboard.
 
+![lists](https://github.com/marta-krzyk-dev/SPA/blob/master/Printscreens/lists.png?raw=true)
+
 ### Dashboard:
 - [x]  The dashboard should list (in chronological order), all of the "To-Do Lists" created by the user thus far. If none have been created, none should be displayed. In either case, there should be a "Create New to-do List button" somewhere on the screen.
 - [x] If one of the existing todo-lists is clicked on, the user should be taken to that list.
 - [x] If a user clicks to create a new todo list, they should be taken to a blank list.
+
+![list_editor](https://github.com/marta-krzyk-dev/SPA/blob/master/Printscreens/list_editor.png?raw=true)
+![editing list](https://github.com/marta-krzyk-dev/SPA/blob/master/Printscreens/editing_list.png?raw=true)
 
 ### Lists:
 When a user is viewing a (new or existing) list, they should be able to :
@@ -43,6 +50,8 @@ When a user is viewing a (new or existing) list, they should be able to :
 - [x] Add as many items to the list as they wish
 - [x] Check off an item as "done", and uncheck it as well
 - [x] Save the list
+
+![account_settings](https://github.com/marta-krzyk-dev/SPA/blob/master/Printscreens/account_settings.png?raw=true)
 
 ### Users 
 - [x] Support as many unique users as possible.
