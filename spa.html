@@ -15,7 +15,7 @@
   <body>
     <ul class="menu">
       <li class="menuItem loggedOut"><a onclick="ShowLogInForm()">Log In</a></li>
-      <li class="menuItem loggedIn"><a style="color:aliceblue" onclick="LogOut()">Logout</a></li>
+      <li class="menuItem loggedIn"><a onclick="LogOut()">Logout</a></li>
       <li class="menuItem loggedIn"><a onclick="ShowAccountSettings()">Account settings</a></li>
       <li class="menuItem loggedIn"><a onclick="ShowDashboard()">Dashboard</a></li>
     </ul>
@@ -96,13 +96,10 @@
 
           <input id="listName" type="text" placeholder="List name..." required pattern=".*\S.*"/>
 
-          <div style="vertical-align: middle;">
+          <div>
           <button onclick="AddListTask()" style="float:right; margin:0px">ADD</button>
-          <span style="
-            display: block;
-            overflow: hidden;
-            padding-right:10px;margin:0px;">
-          <input id="newTaskInput" type="text" placeholder="New task..." style="width: 100%;margin:0px;" pattern=".*\S.*"/></span>
+          <span class="newTaskSpan">
+            <input id="newTaskInput" class="fullWidth" type="text" placeholder="New task..." pattern=".*\S.*"/></span>
          </div>
         </div>
 

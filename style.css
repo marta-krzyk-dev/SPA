@@ -399,3 +399,15 @@ div, span {
 .addBtn:hover {
   background-color: #bbb;
 }
+
+.newTaskSpan {
+  display: block;
+  overflow: hidden;
+  padding-right:10px;
+  margin:0px;
+}
+
+.fullWidth {
+  width: 100%;
+  margin:0px;
+}
