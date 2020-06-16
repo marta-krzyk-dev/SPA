@@ -79,17 +79,15 @@
     </div>
 
     <div id="dashboard" class="loggedIn container dashboard">
-     
 
-    <div id="main_list_dashboard">
-      <div class="container">
-        <span id="no_lists_message">You have no lists.</span>
-        <button id="new_list_button" onclick="ShowListEditor()" style="float: right;">NEW LIST</button>
+      <div id="main_list_dashboard">
+        <div class="container">
+          <span id="no_lists_message">You have no lists.</span>
+          <button id="new_list_button" onclick="ShowListEditor()" style="float: right;">NEW LIST</button>
+        </div>
       </div>
-    </div>
-     
-      <!--div class="container" style="width: 100%;">    </!--div-->
-        <ul id="listUL" class="taskList"></ul>
+      
+      <ul id="listUL" class="taskList"></ul>
   
       <form id="list_editor" method="POST">
         <div class="listHeader">
@@ -114,10 +112,7 @@
 
    <div class="loggedIn">
       <form id="account_settings_form" class="form" method="POST">
-        <div class="inputWrapper ctaWrapper">
-          <div class="message formError" id="error_message_settings"></div>
-        </div>
-
+        
         <div class="inputWrapper">
           <div class="inputLabel">First Name</div>
           <input type="text" id="name" name="firstName" placeholder="Your name" required pattern=".*\S.*"/>
