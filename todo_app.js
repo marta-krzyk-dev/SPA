@@ -58,9 +58,9 @@ window.addEventListener("DOMContentLoaded", () => {
   CollapseElements(dashboard, log_panel);
 
   //Set Visibility
-  setClassVisible("loggedIn", false);
-  setClassVisible("loggedOut", true);
-  CollapseAllForms(); //needed?
+  SetClassVisible("loggedIn", false);
+  SetClassVisible("loggedOut", true);
+  CollapseAllForms();
 
   CreateExampleUser();
 });
@@ -127,9 +127,7 @@ function ShowSignUpForm() {
 
 function ShowLogInForm() {
   CollapseAllForms();
-  //log_in_form.style.display = 'block';
   ShowElements(log_in_form);
-  //ShowById('log_in_form');
 }
 //#endregion
 
@@ -186,9 +184,9 @@ function Register(event) {
       console.log("Registered: " + email);
       current_user_data = user_data;
       console.log(JSON.stringify(current_user_data));
-      setClassVisible("loggedIn", true);
-      setClassVisible("loggedOut", false);
-      ShowDashboard(current_user_data.lists);
+      SetClassVisible("loggedIn", true);
+      SetClassVisible("loggedOut", false);
+      ShowDashboard();
     } catch (error) {
       ShowFormError("Error while signing up.");
       console.log("Error while signing up: " + error);
@@ -212,13 +210,13 @@ function LogIn(event) {
   if (user) {
     if (user.password === hash) {
       console.log("Logged in.");
-      setClassVisible("loggedIn", true);
-      setClassVisible("loggedOut", false);
+      SetClassVisible("loggedIn", true);
+      SetClassVisible("loggedOut", false);
       current_user_data = user;
 
       console.log("Current user data: " + user.toString());
 
-      ShowDashboard(user.lists);
+      ShowDashboard();
     } else {
       ShowFormError("Incorrect password!");
     }
@@ -229,19 +227,18 @@ function LogIn(event) {
 
 function LogOut() {
   current_user_data = null;
-  setClassVisible("loggedIn", false);
-  setClassVisible("loggedOut", true);
+  SetClassVisible("loggedIn", false);
+  SetClassVisible("loggedOut", true);
   CollapseElements(error_message);
 }
 //#endregion
 
 //#region Dashboard
-//TODO should it get data? or get data from global variable?
-function ShowDashboard(data) {
+function ShowDashboard() {
   CollapseAllForms();
   CollapseElements(list_editor);
   ShowElements(dashboard, main_list_dashboard);
-  console.log(JSON.stringify(current_user_data));
+
   data = current_user_data.lists;
 
   if (!data || data.length === 0) {
@@ -564,19 +561,6 @@ function CollapseAllForms() {
   CollapseElements(error_message);
 }
 
-function ShowElementsWithClass(class_name) {
-  let allElements = document.body.querySelectorAll("*");
-  for (let element of allElements) {
-    element.style.display = element.classList.contains(class_name)
-      ? "block"
-      : "none";
-  }
-}
-
-function ShowById(id) {
-  document.getElementById(id).style.display = "block";
-}
-
 function ShowElements(...elements) {
   for (element of elements) {
     try {
@@ -597,7 +581,7 @@ function IsNotEmptyString(str) {
   return str && str.length > 0;
 }
 
-function setClassVisible(className, visible) {
+function SetClassVisible(className, visible) {
   const targets = document.querySelectorAll("." + className);
   for (target of targets) {
     if (visible) {
