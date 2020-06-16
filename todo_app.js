@@ -2,7 +2,7 @@
 var current_user_data = null;
 var current_list_name = null;
 //Handles to UI elements
-var sign_form, log_in_form, error_message, dashboard, account_settings_form, error_message_settings, no_lists_message, log_panel,
+var sign_form, log_in_form, error_message, dashboard, account_settings_form, no_lists_message, log_panel,
 show_lists_button, list_editor, main_list_dashboard, listUL, taskList;
 //#endregion
 
@@ -10,12 +10,10 @@ show_lists_button, list_editor, main_list_dashboard, listUL, taskList;
 window.addEventListener('DOMContentLoaded', () => {
 
 	//SET GLOBAL VARIABLES
-	//taskList = document.getElementById('tasks');
 	log_panel = document.getElementById('logging');
 	sign_form = log_panel.querySelector('#sign_up_form');
 	log_in_form = log_panel.querySelector('#log_in_form');
 	error_message = document.querySelector('#error_message');
-	error_message_settings = document.querySelector('#error_message_settings');
 	account_settings_form = document.getElementById('account_settings_form');
 
 	//Dashboard elements
@@ -32,9 +30,8 @@ window.addEventListener('DOMContentLoaded', () => {
 	sign_form.addEventListener("submit", Register);
 	log_in_form.addEventListener("submit", LogIn);
 	list_editor.addEventListener("submit", SaveList);
-	//const new_task_form = document.getElementById("new_task_form");
-	//new_task_form.addEventListener("submit", addToList);
 	account_settings_form.addEventListener("submit", ChangeAccountSettings);
+
 	taskList.addEventListener('click', function(ev) {
 		if (ev.target.tagName === 'LI') {
 		  ev.target.classList.toggle('checked');
@@ -42,15 +39,15 @@ window.addEventListener('DOMContentLoaded', () => {
 	  }, false);
 
 	//show header
-	document.body.querySelector('HEADER').style.display = 'block';
+	ShowElements(document.body.querySelector('HEADER'));
+
 	//hide dashboard elements
-	dashboard.style.display = 'none';
-	log_panel.style.display = 'none';
+	CollapseElements(dashboard, log_panel);
 
 	//Set Visibility
 	setClassVisible('loggedIn', false);
 	setClassVisible('loggedOut', true);
-	CollapseAllForms();
+	CollapseAllForms();//needed?
 
 	CreateExampleUser();
 });
@@ -89,7 +86,7 @@ function ShowFormError(message) {
 	error_message.innerText = message;
 	ShowElements(error_message);
 }
-//TODO remove this func
+
 function CheckIfStringsNotEmpty(names, ...elems) {
 
 	for(i=0; i < names.length; ++i) {
@@ -219,35 +216,21 @@ function LogOut() {
 
 //#region Dashboard
 //TODO should it get data? or get data from global variable?
-function ShowDashboard(data) {
-	console.log("Display dashboard");
+function ShowDashboard(data=null) {
+
 	CollapseAllForms();
 	CollapseElements(list_editor);
-	console.log("ShowDashboard  list_editor: "+ JSON.stringify(list_editor));
-	console.log("collapsed all forms dashboard");
-	
 	ShowElements(dashboard, main_list_dashboard);
-	ShowElements(main_list_dashboard);
-	console.log("main_list_dashboard + " + main_list_dashboard.toString());
-	main_list_dashboard.style.visibility = "visible";
-	main_list_dashboard.style.display = "block";
-	console.log("collapsed list editor");
-	
-	data = !data ? current_user_data.lists : data;
-	console.log("ShowDashboard received data: "+ JSON.stringify(data));
+
+	data = data ? data : current_user_data.lists;
 
 	if (!data || data.length === 0) {
 		ShowElements(no_lists_message);
 		CollapseElements(listUL);
-		console.log("collapsed lists");
-		return;
 	} else {
 		CollapseElements(no_lists_message);
-		console.log("collapsed no_lists_message");
-
 		PopulateListUL(data, listUL);
 		ShowElements(listUL);
-		CollapseElements(list_editor);
 	}
 }
 
@@ -277,18 +260,13 @@ function SaveList(event) {
 				lists[i].items = tasks; 
 				break;
 			}
-		console.log("overriding list: " + JSON.stringify(current_user_data));
+		
+		//Override list data
 		localStorage.setItem(current_user_data.email, JSON.stringify(current_user_data));
 	}
 	else {
-
-		const new_list = {
-			"created" : Date.now(),
-			"name" : list_name,
-			"items" : tasks
-		};
-
-		current_user_data.lists.push(new_list);
+		//Add new list
+		current_user_data.lists.push({ "created" : Date.now(), "name" : list_name, "items" : tasks});
 		localStorage.setItem(current_user_data.email, JSON.stringify(current_user_data));
 	}
 
@@ -311,15 +289,13 @@ function ConvertToTaskList(ul) {
 	return array;
 }
 
-function PopulateListUL(listy, ul) {
+function PopulateListUL(lists, ul) {
 
 	//Clear elements
 	ul.innerHTML = "";
 
-	console.log("Creating lists: " + JSON.stringify(listy));
-	//sort by created
-	for (let list of listy) {
-		console.log("Creating li for list: " + JSON.stringify(list));
+	for (let list of lists) {
+
 		let li = document.createElement("LI");
 		li.innerText = li.id = list.name;
 		let span = document.createElement("SPAN");
@@ -349,18 +325,14 @@ function PopulateListUL(listy, ul) {
 		li.onclick = (event) => {
 			let listName = event.srcElement.id;
 			let list = current_user_data.lists.find(l => l.name === listName);
-			ShowListEditor(list);
+			if (list !== undefined)
+				ShowListEditor(list);
+			else
+				alert("Trouble opening the list, please try later.");
 		};
 
 		ul.appendChild(li);
 	}
-}
-
-function DeleteTaskList(event) {
-	event.preventDefault();
-	console.log("Delete task list")
-
-	ShowDashboard();
 }
 
 function AddListTaskToUL(item, ul) {
@@ -376,12 +348,7 @@ function AddListTaskToUL(item, ul) {
 	span.appendChild(txt);
 	span.onclick = (event) => {
 		event.cancelBubble = true;
-		
-		console.log(ul);
-		console.log(li);
-		//CollapseElements(event.srcElement.parentElement);
 		ul.removeChild(li);
-		//const id = event.srcElement.id;
 	}; 
 
 	li.appendChild(input);
@@ -392,10 +359,6 @@ function AddListTaskToUL(item, ul) {
 	}
 
 	ul.appendChild(li);
-}
-
-function AddNewTask() {
-
 }
 
 function CreateList(list) {
@@ -422,14 +385,6 @@ function CreateList(list) {
 	}
 }
 
-function ShowElementsWithClass(class_name) {
-
-	let allElements = document.body.querySelectorAll('*');
-	for(let element of allElements) {
-		element.style.display = element.classList.contains(class_name) ? 'block' : 'none';
-	}
-}
-
 function AddListTask(){
 	
 	var text = newTaskInput.value;
@@ -443,8 +398,6 @@ function AddListTask(){
 }
 
 function ShowListEditor(list) {
-	console.log("ShowListEditor " + list);
-	console.log(list);
 
 	CollapseElements(taskList, main_list_dashboard, listUL);
 	ShowElements(list_editor, taskList);
@@ -460,16 +413,14 @@ function ShowListEditor(list) {
 	if (list) {
 		//Populate
 		console.log("Create to do list received data: " + JSON.stringify(list));
-		console.log(list_editor.querySelector('#listName'));
 		list_editor.querySelector('#listName').value = list.name;
 		current_list_name = list.name;
 
 		ShowElements(taskList);
 		const items = list.items;
-		console.log(list.items);
+
 		for(const task of items) {
 			AddListTaskToUL(task, taskList);
-			console.log("Task read: " + task.text);
 		}
 	} else {
 		current_list_name = null;
@@ -481,88 +432,80 @@ function ShowListEditor(list) {
 function ShowAccountSettings(){
 
 	CollapseAllForms();
-	CollapseElements(dashboard, error_message_settings, error_message);
+	CollapseElements(dashboard, error_message);
 	ShowElements(account_settings_form);
 	
-	if (current_user_data) {
-		console.log('account_settings.elements ' + account_settings_form);
-		console.log('current use data: ' + JSON.stringify(current_user_data))
-		account_settings_form['name'].value = current_user_data['name'];
-		account_settings_form['surname'].value = current_user_data['surname'];
-		account_settings_form['email'].value = current_user_data['email'];
-	} else {
-		account_settings_form.querySelector('.formError').innerText = "Cannot load user's account settings. Try again later.";
-	}
+	LoadAccountSettings();
 }
 
 function ChangeAccountSettings(event){
 	event.preventDefault();
-	console.log("ChangeAccountSettings  " + JSON.stringify(event));
-	console.log(event);
 	form = event.srcElement;
-	CollapseElements(error_message_settings);
+	CollapseElements(error_message);
 
-	const new_name = form['name'].value;
-	const new_surname = form['surname'].value;
-	const new_user_data = current_user_data;
-	const old_email = current_user_data.email;
-	const new_email = form['email'].value;
+	const new_user_data = current_user_data; //Copy the current data to modify it
+	let email_success, password_success, name_success = false; //Will change to true, if no data will fail validation
+	
+	name_success = CheckIfStringsNotEmpty(['Name','Surname'], form['name'].value, form['surname'].value);
+	new_user_data.name = form['name'].value;
+	new_user_data.surname = form['surname'].value;
 
-	if (!CheckIfStringsNotEmpty(['Name','Surname','Password'], new_name, new_surname, new_email))
-			return;
-
-	new_user_data.name = new_name;
-	new_user_data.surname = new_surname;
-
-	const new_password = ChangePassword(form['password'].value, form['new_password'].value);
-	if (new_password !== null){
-		console.log("CHanging password to "+ new_password);
+	[password_success, new_password] = ChangePassword(form['password'].value, form['new_password'].value);
+	if (password_success){
 		new_user_data.password = HashText(new_password); 
 	}
 	
-	console.log("email value: " + form['email'].value + " typ: " + typeof(form['email'].value));
+	let email = current_user_data.email;
+	[email_success, email] = ChangeEmail(current_user_data.email, form['email'].value);
+	new_user_data.email = email;
 
-	new_user_data.email = ChangeEmail(current_user_data.email, form['email'].value);
-	localStorage.setItem(new_user_data.email, JSON.stringify(new_user_data));
+	if (name_success && password_success && email_success) {
+ 		//Override user's data or add new item in the storage
+		localStorage.setItem(new_user_data.email, JSON.stringify(new_user_data));
+		const old_email = current_user_data.email;
+		if (new_user_data.email !== old_email) {
+			localStorage.removeItem(old_email);
+		}
+
+		current_user_data = new_user_data;
+		console.log("\nChanged account settings: " + JSON.stringify(new_user_data) + "\n");
 	
-	if (new_user_data.email !== old_email) {
-		localStorage.removeItem(old_email);
+		LoadAccountSettings();
 	}
 
-	console.log("\nnew user data: " + JSON.stringify(new_user_data) + "\n");
-
-	current_user_data = new_user_data;
-	ShowAccountSettings();
-}
-
-function ShowSettingsFormError(message) {
+	form['new_password'].value = '';
+	form['password'].value = '';
 	
-	error_message_settings.innerText = message;
-	ShowElements(error_message_settings);
 }
 
+function LoadAccountSettings() {
+
+	if (current_user_data) {
+		account_settings_form['name'].value = current_user_data['name'];
+		account_settings_form['surname'].value = current_user_data['surname'];
+		account_settings_form['email'].value = current_user_data['email'];
+	} else {
+		ShowFormError("Cannot load user's account settings. Try again later.");
+	}
+}
+
+//Returns [no_errors: Boolean, email : string]
 function ChangeEmail(old_email, new_email) {
 
-	if (!new_email) {
+	if (!new_email || new_email.length === 0) {
 		ShowFormError('Email cannot be empty.');
+		return [false, old_email];
 	} else if (new_email !== old_email) {
 		if (localStorage.getItem(new_email) != null) {
-			console.log('Email is already taken by another user.');
 			ShowFormError('Email is already taken by another user.');
+			return [false, old_email];
 		} else {
-			console.log("Trying to change user's email from " + old_email + " to " + new_email);
-			//current_user_data.email = new_email;
-			//localStorage.setItem(new_email, JSON.stringify(current_user_data));
-			//localStorage.removeItem(old_email);
-			console.log("Removed old user in localStorage: " + localStorage.getItem(old_email));
-			console.log("Changed user's email from " + old_email + " to " + new_email);
-			return new_email;
+			return [true, new_email];
 		}
 	} else {
 		console.log("No change in user's email. " + old_email + " === " + new_email);
+		return [true, old_email];
 	}
-
-	return old_email;
 }
 
 function ChangePassword(old_password, new_password) {
@@ -572,15 +515,17 @@ function ChangePassword(old_password, new_password) {
 			let old_hashed_password = HashText(old_password);
 			if (old_hashed_password !== current_user_data.password) {
 				ShowFormError('Password is incorrect.');
+				return [false, old_password];
 			} else {
-				return new_password;
+				return [true, new_password];
 			}
 		} else {
 			ShowFormError('Enter the current password to change it.');
+			return [false, old_password];
 		}
 	}
 
-	return null;
+	return [true, old_password]; //No intention of password change
 }
 //#endregion
 
@@ -593,15 +538,20 @@ function HashText(text) {
 //#region UI Helper methods
 function CollapseAllForms() {
 	const forms = document.querySelectorAll('FORM');
-	//CollapseElements(forms);
+
 	for (let form of forms) {
 		form.style.display = 'none';
-		console.log("Collapsing form " + form.id);
 	}
 
 	document.getElementById('logging').style.display = 'block';
+}
 
-	//CollapseElement(error_message);
+function ShowElementsWithClass(class_name) {
+
+	let allElements = document.body.querySelectorAll('*');
+	for(let element of allElements) {
+		element.style.display = element.classList.contains(class_name) ? 'block' : 'none';
+	}
 }
 
 function ShowById(id) {
@@ -611,22 +561,16 @@ function ShowById(id) {
 function ShowElements(...elements) {
 	for(element of elements) {
 		try {
-			console.log("Shwoing " + JSON.stringify(element));
 			element.style.display = 'block';
-		} catch (error) {
-			console.log("Eror " + error);
-		}
+		} catch {}
 	}
 }
 
 function CollapseElements(...elements) {
 	for(element of elements) {
 		try {
-			console.log("Collapsing " + JSON.stringify(element));
 			element.style.display = 'none';
-		} catch (error) {
-			console.log("Eror " + error);
-		}
+		} catch (error) {}
 	}
 }
 
@@ -641,7 +585,6 @@ function setClassVisible(className, visible) {
 			target.style.visibility = 'visible';
 			target.style.display = 'inline';
 		} else {
-			console.log("Making " + target + " invisible")
 			target.style.visibility = 'collapse';
 			target.style.display = 'none';
 		}
