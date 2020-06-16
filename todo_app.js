@@ -367,8 +367,6 @@ function PopulateListUL(lists, ul) {
 
 function AddListTaskToUL(item, ul) {
   let li = document.createElement("LI");
-  //li.innerText = item.text;
-
   let input = document.createElement("INPUT");
   input.value = item.text;
   let span = document.createElement("SPAN");
@@ -446,7 +444,7 @@ function ChangeAccountSettings(event) {
   form = event.srcElement;
   CollapseElements(error_message);
 
-  const new_user_data = current_user_data; //Copy the current data to modify it
+  const new_user_data = JSON.parse(JSON.stringify(current_user_data)); //Copy the current data to modify it
   let email_success,
     password_success,
     name_success = false; //Will change to true, if no data will fail validation
@@ -456,9 +454,7 @@ function ChangeAccountSettings(event) {
     form["name"].value,
     form["surname"].value
   );
-  new_user_data.name = form["name"].value;
-  new_user_data.surname = form["surname"].value;
-
+ 
   if (IsNotEmptyString(form["new_password"].value)) {
     [password_success, new_password] = ChangePassword(
       form["password"].value,
@@ -479,13 +475,18 @@ function ChangeAccountSettings(event) {
   new_user_data.email = email;
 
   if (name_success && password_success && email_success) {
-    //Override user's data or add new item in the storage
+	//Override user's data or add new item in the storage
+	new_user_data.name = form["name"].value;
+	new_user_data.surname = form["surname"].value;
+
+	
     localStorage.setItem(new_user_data.email, JSON.stringify(new_user_data));
-    const old_email = current_user_data.email;
+	const old_email = current_user_data.email;
+	console.log("geting ready to remove user " + old_email + " from local storage ");
     if (new_user_data.email !== old_email) {
       localStorage.removeItem(old_email);
-    }
-
+	}
+	
     current_user_data = new_user_data;
     console.log(
       "\nChanged account settings: " + JSON.stringify(new_user_data) + "\n"
