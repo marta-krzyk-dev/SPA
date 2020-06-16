@@ -12,7 +12,7 @@ Here are the user-stories:
 - [x] Create user account
 - [x] Log in
 - [x] Log out
-- [ ] Change user's data (name, surname, password, email)
+- [x] Change user's data (name, surname, password, email)
 
 - [x] Create a new TODO list with custom name
 - [x] Rename a TODO list
@@ -48,6 +48,6 @@ When a user is viewing a (new or existing) list, they should be able to :
 - [x] Support as many unique users as possible.
 - [x] If the user is logged in, then at the top of the screen, on every page of the site, there should be a "log out" button. Clicking that should log the user out.
 - [x] If the user is logged in, then at the top of the screen, on every page of the site, there should be a button that says "account settings". Clicking that link should take the user to a page where they can edit any/all of the information they entered on the signup form.
-- [ ] User can change their password
-- [ ] User can change their email (unless it collides with other existing user)
+- [x] User can change their password
+- [x] User can change their email (unless it collides with other existing user)
 - [x] The actions that one user takes within the application should have virtually no effect on what other users are doing.
