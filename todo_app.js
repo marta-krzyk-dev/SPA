@@ -111,6 +111,7 @@ function GenerateBodyHtml() {
   html = [];
   html.push(GenerateMenuHtml());
   html.push(GenerateHeaderHtml());
+  html.push(GenerateErrorMessage());
 
   console.log(html.join("\n"));
   body.innerHTML = html.join("") + body.innerHTML;
@@ -153,6 +154,13 @@ function GenerateHeaderHtml() {
   html.push(`</div></header>`);
 
   return html.join("\n");
+}
+
+function GenerateErrorMessage() {
+  const id = "error_message";
+  const classes = ["message", "formError"];
+
+  return `<div id="${id}" class="${classes.join(' ')}"></div>`;
 }
 //#endregion
 
