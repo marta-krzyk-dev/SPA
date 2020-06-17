@@ -18,6 +18,9 @@ var sign_form,
 
 //#region Site loaded
 window.addEventListener("DOMContentLoaded", () => {
+
+  GenerateBodyHtml();
+
   //SET GLOBAL VARIABLES
   log_panel = document.getElementById("logging");
   sign_form = log_panel.querySelector("#sign_up_form");
@@ -97,6 +100,34 @@ function CreateExampleUser() {
       lists: lists,
     })
   );
+}
+//#endregion
+
+//#region HTML generators
+function GenerateBodyHtml() {
+  var body = document.getElementsByTagName("BODY")[0];
+
+  //Generate body
+  html = [];
+  html.push(GenerateMenuHtml());
+
+  body.innerHTML = html.join("") + body.innerHTML;
+}
+
+function GenerateMenuHtml() {
+
+  const ulClass = "menu";
+  const classes = [["menuItem", "loggedOut"],["menuItem", "loggedIn"],["menuItem", "loggedIn"],["menuItem", "loggedIn"]];
+  const functions = [ ShowLogInForm, LogOut, ShowAccountSettings, ShowDashboard];
+  const names = ["Log In", "Log Out", "Account Settings", "Dashboard"];
+
+  let ul = [`<ul class="${ulClass}">`];
+  for(var i = 0; i < functions.length; ++i){
+    ul.push(`<li class="${classes[i].join(' ')}"><a onclick="${functions[i].name}()">${names[i]}</a></li>`);
+  }
+  ul.push(`</ul>`);
+
+  return ul.join("");
 }
 //#endregion
 
