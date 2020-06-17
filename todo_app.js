@@ -110,7 +110,9 @@ function GenerateBodyHtml() {
   //Generate body
   html = [];
   html.push(GenerateMenuHtml());
+  html.push(GenerateHeaderHtml());
 
+  console.log(html.join("\n"));
   body.innerHTML = html.join("") + body.innerHTML;
 }
 
@@ -127,7 +129,30 @@ function GenerateMenuHtml() {
   }
   ul.push(`</ul>`);
 
-  return ul.join("");
+  return ul.join("\n");
+}
+
+function GenerateHeaderHtml() {
+
+  const title = "TODOs list manager";
+  const descId = "description";
+  const classes = ["loggedOut", "desc", "clearfix", "halfScreenButton"];
+  const descText = `Immerse yourself into the world of effective task-smashing with this
+  innovate task-tracking tool.<br />Start your journey into new life of concious planning now!`;
+  const buttonIds = ["log_in", "sign_up"];
+  const buttonFunctions = [ShowLogInForm, ShowSignUpForm];
+  const buttonNames = ["Log in", "Sign up"];
+
+  let html = [`<header class="${classes[0]}">`];
+  html.push(`<h1>${title}</h1>`);
+  html.push(`<span id="${descId}" class="${classes[1]}">${descText}</span>`);
+  html.push(`<div class="${classes[2]}">`);
+  for(var i = 0; i < buttonIds.length; ++i){
+    html.push(`<button id="${buttonIds[i]}" class="${classes[3]}" onclick="${buttonFunctions[i].name}()">${buttonNames[i]}</button>`);
+  }
+  html.push(`</div></header>`);
+
+  return html.join("\n");
 }
 //#endregion
 
