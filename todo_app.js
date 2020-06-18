@@ -116,9 +116,10 @@ function GenerateBodyHtml() {
   html.push(GenerateErrorMessage());
   html.push(GenerateElementHtml('div', 'logging', ['mainContainer', 'loggedOut'], `${GenerateSignInFormHtml()}\n\n${GenerateLogInFormHtml()}`));
   html.push(GenerateDashboardHtml());
+  html.push(GenerateElementHtml('div', '', ['loggedIn'], `${GenerateAccountSettingsFormHtml()}`));
 
   console.log(html.join("\n"));
-  body.innerHTML = html.join("") + body.innerHTML;
+  body.innerHTML = html.join("");
 }
 
 function GenerateMenuHtml() {
@@ -195,13 +196,20 @@ function GenerateLogInFormHtml() {
   ];
   const formId = "log_in_form", formClass = "form", submitButtonText = "Log In";
 
-  let h= GenerateFormHtml(formId, formClass, inputData, submitButtonText);
+  return GenerateFormHtml(formId, formClass, inputData, submitButtonText);
+}
 
-  console.log("---------------");
-  console.log(h);
-  console.log("---------------");
+function GenerateAccountSettingsFormHtml() {
+  const inputData = [
+    {"label" : "First Name", "type":"text", "name":"name", "placeholder":"Your name", "isRequired" : true, "pattern":nonEmptyStringPattern},
+    {"label" : "Last Name", "type":"text", "name":"surname", "placeholder":"Last name", "isRequired" : true, "pattern":nonEmptyStringPattern},
+    {"label" : "Email", "type":"email", "name":"email", "placeholder":"example@gmail.com", "isRequired" : false, "pattern": null},
+    {"label" : "Current Password", "type":"password", "name":"password", "placeholder":"Your current password", "isRequired" : false, "pattern":null},
+    {"label" : "New Password", "type":"password", "name":"new_password", "placeholder":"Make it a good one!", "isRequired" : false, "pattern":null},
+  ];
+  const formId="account_settings_form", formClass = "form", submitButtonText = "Save Changes";
 
-  return h;
+  return GenerateFormHtml(formId, formClass, inputData, submitButtonText);
 }
 
 function GenerateFormHtml(formId, formClass, inputs, submitButtonText) {
@@ -239,15 +247,11 @@ function GenerateDashboardHtml() {
   const ulId = "listUL";
   const ulClass = "taskList";
 
-
   const ulHtml = GenerateElementHtml('ul', ulId, [ulClass], '');
   const formHtml = GenerateListEditorHtml();
   const innerHtml = [GenerateMainListDashboardHtml(), ulHtml, formHtml];
 
-  const h = GenerateElementHtml('div', id, classes, innerHtml.join('\n'));
-
-  console.log("----------888-----\n" + h + "\n--------888------");
-  return h;
+  return GenerateElementHtml('div', id, classes, innerHtml.join('\n'));
 }
 
 function GenerateListEditorHtml() {
