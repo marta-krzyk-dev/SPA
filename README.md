@@ -1,5 +1,5 @@
-# TODO list SPA
-Single Page Application for managing TODO list and user accounts
+# TODO list Single Page Application
+Goal: Create a Single Page Application for managing TODO list and user accounts with the ugliest UI imaginable
 
 A simple "to-do list" application, using client-side **HTML, CSS, Javascript**. 
 
