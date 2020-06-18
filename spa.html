@@ -13,52 +13,6 @@
   </head>
 
   <body>
-    
-
-    <div id="logging" class="mainContainer loggedOut">
-      <form  id="sign_up_form" method="POST" class="form">
-        <div class="formContainer">
-          <div class="inputWrapper">
-            <div class="inputLabel">First Name</div>
-            <input type="text" name="firstName" placeholder="Your name" required pattern=".*\S.*"/>
-          </div>
-          <div class="inputWrapper">
-            <div class="inputLabel">Last Name</div>
-            <input type="text" name="lastName" placeholder="Last name" required pattern=".*\S.*"/>
-          </div>
-          <div class="inputWrapper">
-            <div class="inputLabel">Email</div>
-            <input type="email" name="email" placeholder="example@gmail.com" required/>
-          </div>
-          <div class="inputWrapper">
-            <div class="inputLabel">Password</div>
-            <input type="password" name="password" placeholder="Make it a good one!" required/> 
-          </div>
-          <div class="inputWrapper">
-            <div class="inputLabel"><input type="checkbox" name="tosAgreement" required/>I agree to the Terms of Use</div>
-          </div>
-          <div class="inputWrapper ctaWrapper">
-            <button type="submit" class="green">Get Started</button>
-          </div>
-        </div>
-      </form>
-
-      <form id="log_in_form" class="form" method="POST">
-
-        <div class="inputWrapper">
-          <div class="inputLabel">Email</div>
-          <input type="email" name="email" required/>
-        </div>
-        <div class="inputWrapper">
-          <div class="inputLabel">Password</div>
-          <input type="password" name="password" required/>
-        </div>
-        <div class="inputWrapper ctaWrapper">
-          <button type="submit" class="green">Log In</button>
-        </div>
-      </form>
-    </div>
-
     <div id="dashboard" class="loggedIn container dashboard">
 
       <div id="main_list_dashboard">

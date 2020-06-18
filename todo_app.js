@@ -112,6 +112,7 @@ function GenerateBodyHtml() {
   html.push(GenerateMenuHtml());
   html.push(GenerateHeaderHtml());
   html.push(GenerateErrorMessage());
+  html.push(GenerateElementHtml('div', 'logging', ['mainContainer', 'loggedOut'], `${GenerateSignInFormHtml()}\n\n${GenerateLogInFormHtml()}`));
 
   console.log(html.join("\n"));
   body.innerHTML = html.join("") + body.innerHTML;
@@ -148,7 +149,7 @@ function GenerateHeaderHtml() {
   html.push(`<h1>${title}</h1>`);
   html.push(`<span id="${descId}" class="${classes[1]}">${descText}</span>`);
   html.push(`<div class="${classes[2]}">`);
-  for(var i = 0; i < buttonIds.length; ++i){
+  for(var i = 0; i < buttonIds.length; ++i) {
     html.push(`<button id="${buttonIds[i]}" class="${classes[3]}" onclick="${buttonFunctions[i].name}()">${buttonNames[i]}</button>`);
   }
   html.push(`</div></header>`);
@@ -160,7 +161,73 @@ function GenerateErrorMessage() {
   const id = "error_message";
   const classes = ["message", "formError"];
 
-  return `<div id="${id}" class="${classes.join(' ')}"></div>`;
+  return GenerateElementHtml('div', id, classes, "");
+}
+
+function GenerateElementHtml(element, id, classArray, innerHtml) {
+    return `<${element} id="${id}" class="${classArray.join(' ')}">
+      ${innerHtml}
+</${element}>`;
+}
+
+function GenerateSignInFormHtml() {
+
+  const inputData = [
+    {"label" : "First Name", "type":"text", "name":"firstname", "placeholder":"Your name", "isRequired" : true, "pattern":".*\S.*"},
+    {"label" : "Last Name", "type":"text", "name":"lastname", "placeholder":"Last name", "isRequired" : true, "pattern":".*\S.*"},
+    {"label" : "Email", "type":"email", "name":"email", "placeholder":"example@gmail.com", "isRequired" : true, "pattern": null},
+    {"label" : "Password", "type":"password", "name":"password", "placeholder":"Make it a good one!", "isRequired" : true, "pattern":null},
+    {"label" : "I agree to the Terms of Use", "type":"checkbox", "name":"tosAgreement", "placeholder":null, "isRequired" : true, "pattern":null}
+  ];
+  const formId="sign_up_form", formClass = "form", submitButtonText = "Get Started";
+
+  return GenerateFormHtml(formId, formClass, inputData, submitButtonText);
+}
+
+function GenerateLogInFormHtml() {
+
+  const inputData = [
+    {"label" : "Email", "type":"email", "name":"email", "placeholder":null, "isRequired" : true, "pattern": null},
+    {"label" : "Password", "type":"password", "name":"password", "placeholder":null, "isRequired" : true, "pattern":null}
+  ];
+  const formId = "log_in_form", formClass = "form", submitButtonText = "Log In";
+
+  let h= GenerateFormHtml(formId, formClass, inputData, submitButtonText);
+
+  console.log("---------------");
+  console.log(h);
+  console.log("---------------");
+
+  return h;
+}
+
+function GenerateFormHtml(formId, formClass, inputs, submitButtonText) {
+
+  const wrapperClass = "inputWrapper";
+  const innerFormClass = "formContainer";
+  const labelClass = "inputLabel";
+
+  let html = [`<form id="${formId}" method="POST" class="${formClass}">
+            <div class="${innerFormClass}">`];
+
+  html.push(inputs.map(i => {
+    
+    const inputHtml = `<input type="${i.type}" name="${i.name}" ${(i.placeholder===null ? '' : `placeholder="${i.placeholder}"`)} ${i.isRequired ? 'required' : ''} ${i.pattern==null ? '' : `pattern="${i.pattern}"`}/>`;
+    const innerHtml = i.type === "checkbox" ? `<div class="${labelClass}">${inputHtml}${i.label}</div>` :
+     `<div class="${labelClass}">${i.label}</div> ${inputHtml}`;
+
+    return `<div class="${wrapperClass}">
+      ${innerHtml}
+    </div>`
+  }).join('\n'));
+
+  html.push(`<div class="${wrapperClass} ctaWrapper">
+    <button type="submit" class="green">${submitButtonText}</button>
+  </div>`);
+
+  html.push(`</div></form>`);
+
+  return html.join('\n');
 }
 //#endregion
 
