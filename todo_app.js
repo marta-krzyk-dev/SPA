@@ -22,6 +22,7 @@ const nonEmptyStringPattern = ".*\\S.*";
 window.addEventListener("DOMContentLoaded", () => {
 
   GenerateBodyHtml();
+  AddToHeadHtml();
 
   //SET GLOBAL VARIABLES
   log_panel = document.getElementById("logging");
@@ -106,10 +107,15 @@ function CreateExampleUser() {
 //#endregion
 
 //#region HTML generators
+function AddToHeadHtml() {
+  var head = document.getElementsByTagName("HEAD")[0];
+  const title = "Let's do it!";
+  head.innerHTML += `<title>${title}</title>`;
+}
+
 function GenerateBodyHtml() {
   var body = document.getElementsByTagName("BODY")[0];
 
-  //Generate body
   html = [];
   html.push(GenerateMenuHtml());
   html.push(GenerateHeaderHtml());
@@ -118,7 +124,6 @@ function GenerateBodyHtml() {
   html.push(GenerateDashboardHtml());
   html.push(GenerateElementHtml('div', '', ['loggedIn'], `${GenerateAccountSettingsFormHtml()}`));
 
-  console.log(html.join("\n"));
   body.innerHTML = html.join("");
 }
 
