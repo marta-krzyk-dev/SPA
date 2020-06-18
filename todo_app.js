@@ -14,6 +14,8 @@ var sign_form,
   main_list_dashboard,
   listUL,
   taskList;
+ //Other
+const nonEmptyStringPattern = ".*\\S.*";
 //#endregion
 
 //#region Site loaded
@@ -113,6 +115,7 @@ function GenerateBodyHtml() {
   html.push(GenerateHeaderHtml());
   html.push(GenerateErrorMessage());
   html.push(GenerateElementHtml('div', 'logging', ['mainContainer', 'loggedOut'], `${GenerateSignInFormHtml()}\n\n${GenerateLogInFormHtml()}`));
+  html.push(GenerateDashboardHtml());
 
   console.log(html.join("\n"));
   body.innerHTML = html.join("") + body.innerHTML;
@@ -228,6 +231,72 @@ function GenerateFormHtml(formId, formClass, inputs, submitButtonText) {
   html.push(`</div></form>`);
 
   return html.join('\n');
+}
+ 
+function GenerateDashboardHtml() {
+  const id = 'dashboard';
+  const classes = ["loggedIn", "container", "dashboard"];
+  const ulId = "listUL";
+  const ulClass = "taskList";
+
+
+  const ulHtml = GenerateElementHtml('ul', ulId, [ulClass], '');
+  const formHtml = GenerateListEditorHtml();
+  const innerHtml = [GenerateMainListDashboardHtml(), ulHtml, formHtml];
+
+  const h = GenerateElementHtml('div', id, classes, innerHtml.join('\n'));
+
+  console.log("----------888-----\n" + h + "\n--------888------");
+  return h;
+}
+
+function GenerateListEditorHtml() {
+
+  const formId = "list_editor";
+  const containerClass = "listHeader";
+  const show_lists_button_id = "show_lists_button", showListButtonText = "BACK TO DASHBOARD", saveListButtonText = "SAVE LIST", addButtonText = "ADD";
+  const styleLeft = "float: left;", styleRight = "float: right", styleNoMargin = "margin:0px";
+  const spanClass = "newTaskSpan";
+  const inputData = {"id" : "listName", "type":"text", "placeholder":"List name...", "pattern":nonEmptyStringPattern};
+  const newTaskInputData = {"id" : "newTaskInput", "type":"text", "class":"fullWidth", "placeholder":"New task...", "pattern":nonEmptyStringPattern};
+  const taskListId = "taskList"; const taskListClass = "taskList";
+
+  const html = `<form id="${formId}" method="POST">
+  <div class="${containerClass}">
+    <button id="${show_lists_button_id}" onclick="${ShowDashboard.name}()" style="${styleLeft}">${showListButtonText}</button>
+    <button type="submit" style="${styleRight}">${saveListButtonText}</button>
+
+    <input id="${inputData.id}" type="${inputData.type}" placeholder="${inputData.placeholder}" required pattern="${inputData.pattern}"/>
+
+    <div>
+    <button onclick="${AddListTask.name}()" style="${styleRight}; ${styleNoMargin}">${addButtonText}</button>
+    <span class="${spanClass}">
+      <input id="${newTaskInputData.id}" class="${newTaskInputData.class}" type="${newTaskInputData.type}" placeholder="${newTaskInputData.placeholder}" pattern="${nonEmptyStringPattern}"/></span>
+   </div>
+  </div>
+
+  <ul id="${taskListId}" class="${taskListClass}"></ul>
+</form>`
+
+  return html;
+}
+
+function GenerateMainListDashboardHtml() {
+
+  const containerClass = "container";
+  const spanId = "no_lists_message";
+  const spanMessage = "You have no lists.";
+  const buttonId = "new_list_button";
+  const buttonStyle = "float: right";
+  const buttonText = "NEW LIST";
+
+  const innerHtml =
+`<div class="${containerClass}">
+  <span id="${spanId}">${spanMessage}</span>
+  <button id="${buttonId}" onclick="${ShowListEditor.name}()" style="${buttonStyle}">${buttonText}</button>
+</div>`;
+
+  return GenerateElementHtml('div', 'main_list_dashboard', [], innerHtml);
 }
 //#endregion
 

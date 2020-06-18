@@ -13,35 +13,6 @@
   </head>
 
   <body>
-    <div id="dashboard" class="loggedIn container dashboard">
-
-      <div id="main_list_dashboard">
-        <div class="container">
-          <span id="no_lists_message">You have no lists.</span>
-          <button id="new_list_button" onclick="ShowListEditor()" style="float: right;">NEW LIST</button>
-        </div>
-      </div>
-      
-      <ul id="listUL" class="taskList"></ul>
-  
-      <form id="list_editor" method="POST">
-        <div class="listHeader">
-          <button id="show_lists_button" onclick="ShowDashboard()" style="float: left;">BACK TO DASHBOARD</button>
-          <button type="submit" style="float: right;">SAVE LIST</button>
-
-          <input id="listName" type="text" placeholder="List name..." required pattern=".*\S.*"/>
-
-          <div>
-          <button onclick="AddListTask()" style="float:right; margin:0px">ADD</button>
-          <span class="newTaskSpan">
-            <input id="newTaskInput" class="fullWidth" type="text" placeholder="New task..." pattern=".*\S.*"/></span>
-         </div>
-        </div>
-
-        <ul id="taskList" class="taskList"></ul>
-      </form>
-    </div>
-
    <div class="loggedIn">
       <form id="account_settings_form" class="form" method="POST">
         
